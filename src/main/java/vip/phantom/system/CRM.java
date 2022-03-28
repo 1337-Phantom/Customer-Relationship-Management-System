@@ -35,7 +35,7 @@ public class CRM {
             debugFps = fpsCounter;
             fpsCounter = 0;
             fpsUpdateTime = System.currentTimeMillis();
-            Display.setTitle("FPS: " + getDebugFps());
+            Display.setTitle("Customer Relationship System | Yorck Heilmann | FPS: " + getDebugFps());
         }
 
         if (currentScreen != null) {
@@ -68,9 +68,11 @@ public class CRM {
     }
 
     public void displayScreen(Screen screen) {
-        screen.setResolution(width, height);
-        currentScreen = screen;
-        screen.initScreen();
+        if (screen != currentScreen) {
+            screen.setResolution(width, height);
+            currentScreen = screen;
+            screen.initScreen();
+        }
     }
 
     public void shutdownHook() {

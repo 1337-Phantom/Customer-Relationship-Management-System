@@ -7,17 +7,17 @@ package vip.phantom.system.user_interface.screens;
 
 import vip.phantom.api.resources.ResourceLocation;
 import vip.phantom.api.utils.RenderUtil;
-import vip.phantom.system.user_interface.buttons.Button;
+import vip.phantom.system.Category;
+import vip.phantom.system.user_interface.buttons.square_buttons.NormalButton;
 import vip.phantom.system.user_interface.screens.main_screen.MainScreen;
-
-import java.awt.*;
+import vip.phantom.system.user_interface.screens.main_screen.home.HomeScreen;
 
 public class LoginScreen extends Screen {
 
     @Override
     public void initScreen() {
         super.initScreen();
-        buttonList.add(new Button(0, (int) (width / 2f - 100), (int) (height / 2f - 12), 200, 30, "Login"));
+        buttonList.add(new NormalButton(0, (int) (width / 2f - 100), (int) (height / 2f - 12), 200, 25, "Login"));
     }
 
     @Override
@@ -29,7 +29,7 @@ public class LoginScreen extends Screen {
     @Override
     public void buttonPressed(int buttonId) {
         switch (buttonId) {
-            case 0 -> crm.displayScreen(new MainScreen());
+            case 0 -> crm.displayScreen(Category.HOME.getCategoryScreen());
         }
         super.buttonPressed(buttonId);
     }

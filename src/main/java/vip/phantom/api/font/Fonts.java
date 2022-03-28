@@ -15,16 +15,13 @@ import java.util.Objects;
 public class Fonts {
     private static Fonts INSTANCE;
 
-    public static final FontRenderer VERDANA15 = getFont("Verdana", 15);
-    public static final FontRenderer VERDANA18 = getFont("Verdana", 18);
-    public static final FontRenderer VERDANA20 = getFont("Verdana", 20);
-    public static final FontRenderer VERDANA25 = getFont("Verdana", 25);
-    public static final FontRenderer VERDANA45 = getFont("Verdana", 45);
+    public static final FontRenderer VERDANA10 = getFont("Verdana", 10);
+    public static final FontRenderer VERDANA12 = getFont("Verdana", 12);
 
     private static FontRenderer getFont(String name, float size) {
         try {
 //            return new FontRenderer(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(getINSTANCE().getClass().getResourceAsStream("/fonts/" + name + ".ttf"))).deriveFont(size));
-            return new FontRenderer(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(getINSTANCE().getClass().getResourceAsStream("/fonts/" + name + ".ttf"))).deriveFont(size * 2));
+            return new FontRenderer(Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(getINSTANCE().getClass().getResourceAsStream("/fonts/" + name + ".ttf"))).deriveFont(size * 1.5f));
         } catch (FontFormatException | IOException e) {
             e.printStackTrace();
         }

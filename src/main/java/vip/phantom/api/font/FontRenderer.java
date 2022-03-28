@@ -9,6 +9,7 @@
 package vip.phantom.api.font;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -29,6 +30,7 @@ public class FontRenderer {
     private final Font boldFont;
     private final Font italicFont;
 
+    private final boolean debugMode = false;
     private final File outputFile = new File("C:\\Users\\hanyo\\Desktop\\");
 
     private final Graphics2D graphicsContext;
@@ -40,7 +42,7 @@ public class FontRenderer {
 
     private final Pattern patternControlCode = Pattern.compile("(?i)\\u00A7[0-9A-FK-OR]");
     private char colorCodePrefix = "§".charAt(0);
-    private int[] colorCodes = new int[32];
+    private int[] mcColorCodes = new int[32];
 
 //    private int noCharFoundTextureID = createTexture(new BufferedImage());
 
@@ -67,7 +69,7 @@ public class FontRenderer {
         this.italicFont = font.deriveFont(Font.ITALIC);
         this.antiAliasing = antiAliasing;
         final long time = System.currentTimeMillis();
-        genColorCodes();
+        genMcColorCodes();
 
         final BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
@@ -119,7 +121,7 @@ public class FontRenderer {
                 default:
                     return;
             }
-            characterGraphic.setColor(new Color(255, 255, 255, 0));
+            characterGraphic.setColor(debugMode ? Color.RED : new Color(255, 255, 255, 0));
             characterGraphic.fillRect(0, 0, characterImage.getWidth(), characterImage.getHeight());
             characterGraphic.setColor(Color.white);
 
@@ -129,6 +131,17 @@ public class FontRenderer {
                 characterGraphic.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
             }
             characterGraphic.drawString(Character.toString(character), MARGIN, fontMetrics.getAscent());
+            if (debugMode) {
+                characterGraphic.setColor(Color.green);
+                characterGraphic.draw(new Rectangle(0, fontMetrics.getAscent(), characterImage.getWidth(), 1));
+                characterGraphic.setColor(Color.blue);
+                characterGraphic.draw(new Rectangle(0, characterImage.getHeight() - MARGIN * 2, characterImage.getWidth(), 1));
+                try {
+                    ImageIO.write(characterImage, "png", new File(outputFile, character + ".png"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             final HashMap<Character, CharacterData> toPut = i == 0 ? plainCharacters : i == 1 ? boldCharacters : italicCharacters;
             if (!toPut.containsKey(character)) {
                 toPut.put(character, new CharacterData(characterImage.getWidth(), characterImage.getHeight(), createTextureID(characterImage)));
@@ -155,23 +168,18 @@ public class FontRenderer {
         underline = false;
         italicStyle = false;
 
-        glPushMatrix();
-        final boolean blendFlag = glIsEnabled(GL_BLEND);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        final boolean texture2DFlag = glIsEnabled(GL_TEXTURE_2D);
-        glEnable(GL_TEXTURE_2D);
-        final boolean lightingFlag = glIsEnabled(GL_LIGHTING);
-        glDisable(GL_LIGHTING);
+        GL11.glPushMatrix();
+        final boolean blendFlag = GL11.glIsEnabled(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        final boolean texture2DFlag = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        final boolean lightingFlag = GL11.glIsEnabled(GL11.GL_LIGHTING);
+        GL11.glDisable(GL11.GL_LIGHTING);
 
-        glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
-        glScaled(0.5, 0.5, 0.5);
+        GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
 
         x -= MARGIN / 2f;
-
-        x *= 2;
-        y -= 2;
-        y *= 2;
 
 
         float charX = Math.round(x);
@@ -193,8 +201,8 @@ public class FontRenderer {
 
                 if (codeIndex < 16) {
                     if (codeIndex >= 0) {
-                        final int textColor = colorCodes[codeIndex];
-                        glColor4f((float) (textColor >> 16) / 255.0F, (float) (textColor >> 8 & 255) / 255.0F, (float) (textColor & 255) / 255.0F, 255);
+                        final int textColor = mcColorCodes[codeIndex];
+                        GL11.glColor4f((float) (textColor >> 16) / 255.0F, (float) (textColor >> 8 & 255) / 255.0F, (float) (textColor & 255) / 255.0F, 255);
                     }
                 } else if (codeIndex == 16) {
                     //§k
@@ -218,7 +226,7 @@ public class FontRenderer {
                     strikethrough = false;
                     underline = false;
                     italicStyle = false;
-                    glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+                    GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
                 }
             } else {
                 if (obfuscate) {
@@ -241,41 +249,41 @@ public class FontRenderer {
                 }
 
 
-                glBindTexture(GL_TEXTURE_2D, characterData.getTextureID());
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                GL11.glBindTexture(GL11.GL_TEXTURE_2D, characterData.getTextureID());
+                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
 
-                glBegin(GL_QUADS);
+                GL11.glBegin(GL11.GL_QUADS);
                 final float yOffset = 0;
-                glTexCoord2d(0, mirror ? 1 : 0);
-                glVertex2d(charX, charY + yOffset);
+                GL11.glTexCoord2d(0, mirror ? 1 : 0);
+                GL11.glVertex2d(charX, charY + yOffset);
 
-                glTexCoord2d(0, mirror ? 0 : 1);
-                glVertex2d(charX, charY + cHeight + yOffset);
+                GL11.glTexCoord2d(0, mirror ? 0 : 1);
+                GL11.glVertex2d(charX, charY + cHeight + yOffset);
 
-                glTexCoord2d(1, mirror ? 0 : 1);
-                glVertex2d(charX + cWidth, charY + cHeight + yOffset);
+                GL11.glTexCoord2d(1, mirror ? 0 : 1);
+                GL11.glVertex2d(charX + cWidth, charY + cHeight + yOffset);
 
-                glTexCoord2d(1, mirror ? 1 : 0);
-                glVertex2d(charX + cWidth, charY + yOffset);
+                GL11.glTexCoord2d(1, mirror ? 1 : 0);
+                GL11.glVertex2d(charX + cWidth, charY + yOffset);
 
-                glEnd();
+                GL11.glEnd();
                 charX += cWidth - MARGIN * 2 * (sizeWidthPercentage / 100);
             }
         }
 
-        glBindTexture(GL_TEXTURE_2D, 0);
+        GL11.glBindTexture(GL_TEXTURE_2D, 0);
 
         if (!blendFlag) {
-            glDisable(GL_BLEND);
+            GL11.glDisable(GL11.GL_BLEND);
         }
         if (!texture2DFlag) {
-            glDisable(GL_TEXTURE_2D);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
         }
         if (lightingFlag) {
-            glEnable(GL_LIGHTING);
+            GL11.glEnable(GL11.GL_LIGHTING);
         }
-        glPopMatrix();
-        glColor4f(1, 1, 1, 1);
+        GL11.glPopMatrix();
+        GL11.glColor4f(1, 1, 1, 1);
     }
 
     private void drawHorizontalLine(float x, float endX, float y, float lineWidth, Color color) {
@@ -300,7 +308,7 @@ public class FontRenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glDisable(GL_TEXTURE_2D);
-        glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
+        GL11.glColor4f(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha() / 255f);
         glBegin(GL_QUADS);
         glVertex2f(left, top);
         glVertex2f(left, bottom);
@@ -337,7 +345,7 @@ public class FontRenderer {
             final CharacterData characterData = plainCharacters.get(character);
             width += characterData.getWidth() - 2 * MARGIN;
         }
-        return width / 2f;
+        return width;
     }
 
     public String stripControlCodes(String text) {
@@ -359,7 +367,7 @@ public class FontRenderer {
             }
         }
         /* everything has to be divided by two again because we scale the height and width with the factor 0.5f*/
-        return height / 2f - height / 2f / 4f;
+        return height;
     }
 
     public float getHeight() {
@@ -367,7 +375,7 @@ public class FontRenderer {
     }
 
     // minecraft`s method to generate the color codes they use
-    private void genColorCodes() {
+    private void genMcColorCodes() {
         for (int i = 0; i < 32; ++i) {
             int j = (i >> 3 & 1) * 85;
             int k = (i >> 2 & 1) * 170 + j;
@@ -384,7 +392,7 @@ public class FontRenderer {
                 i1 /= 4;
             }
 
-            colorCodes[i] = (k & 255) << 16 | (l & 255) << 8 | i1 & 255;
+            mcColorCodes[i] = (k & 255) << 16 | (l & 255) << 8 | i1 & 255;
         }
     }
 
@@ -420,16 +428,16 @@ public class FontRenderer {
         // Flips the byte buffer, not sure why this is needed.
         buffer.flip();
 
-        int textureId = glGenTextures();
+        int textureId = GL11.glGenTextures();
         // Binds the opengl texture by the texture id.
-        glBindTexture(GL_TEXTURE_2D, textureId);
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
 
         // Sets the texture parameter stuff.
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
 
         // Uploads the texture to opengl.
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getWidth(), image.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, image.getWidth(), image.getHeight(), 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
 
         // Binds the opengl texture 0.
         return textureId;

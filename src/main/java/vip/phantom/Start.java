@@ -25,7 +25,7 @@ public class Start {
         try {
             Display.setDisplayMode(new DisplayMode(720, 400));
             Display.setInitialBackground(0, 0, 0);
-            Display.setTitle("Customer relationship system by Yorck Heilmann");
+            Display.setTitle("Customer Relationship System | Yorck Heilmann");
             Display.setResizable(true);
             Display.create();
         } catch (LWJGLException e) {
