@@ -7,7 +7,7 @@ package vip.phantom.system.user_interface.screens;
 
 import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.CRM;
-import vip.phantom.system.user_interface.buttons.Button;
+import vip.phantom.system.user_interface.interactive_areas.buttons.Button;
 import vip.phantom.system.user_interface.screens.main_screen.Overlay;
 
 import java.awt.*;
@@ -35,11 +35,19 @@ public class Screen {
 
     public void closeOverlay() {
         activeOverlay = null;
+        initScreen();
     }
 
     public void drawScreen(int mouseX, int mouseY) {
+        int realMouseX = mouseX, realMouseY = mouseY;
+        if (activeOverlay != null) {
+            mouseX = mouseY = -1;
+        }
         for (Button button : buttonList) {
             button.drawScreen(mouseX, mouseY);
+        }
+        if (activeOverlay != null) {
+            activeOverlay.drawScreen(realMouseX, realMouseY);
         }
     }
 
@@ -48,9 +56,13 @@ public class Screen {
     }
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        for (Button button : buttonList) {
-            if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
-                buttonPressed(button.buttonId);
+        if (activeOverlay != null) {
+            activeOverlay.mouseClicked(mouseX, mouseY, mouseButton);
+        } else {
+            for (Button button : buttonList) {
+                if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
+                    buttonPressed(button.buttonId);
+                }
             }
         }
     }
@@ -60,10 +72,14 @@ public class Screen {
     }
 
     public void mouseReleased(int mouseX, int mouseY, int mouseButton) {
-        for (Button button : buttonList) {
-            if (button.mouseReleased(mouseX, mouseY, mouseButton)) {
-                buttonReleased(button.buttonId);
-                break;
+        if (activeOverlay != null) {
+            activeOverlay.mouseReleased(mouseX, mouseY, mouseButton);
+        } else {
+            for (Button button : buttonList) {
+                if (button.mouseReleased(mouseX, mouseY, mouseButton)) {
+                    buttonReleased(button.buttonId);
+                    break;
+                }
             }
         }
     }
@@ -72,12 +88,25 @@ public class Screen {
 
     }
 
+    public void handleMouseInput(int mouseX, int mouseY) {
+        if (activeOverlay != null) {
+            activeOverlay.handleMouseInput(mouseX, mouseY);
+        }
+    }
+
     public void keyTyped(char typedChar, int keyCode) {
+        if (activeOverlay != null) {
+            activeOverlay.keyTyped(typedChar, keyCode);
+        }
     }
 
     public void setResolution(int width, int height) {
         this.width = width;
         this.height = height;
         initScreen();
+        if (activeOverlay != null) {
+            activeOverlay.setResolution(width, height);
+            activeOverlay.initOverlay();
+        }
     }
 }

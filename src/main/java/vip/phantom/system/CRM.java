@@ -61,6 +61,12 @@ public class CRM {
         }
     }
 
+    public void handleMouseInput(int mouseX, int mouseY) {
+        if (currentScreen != null) {
+            currentScreen.handleMouseInput(mouseX, mouseY);
+        }
+    }
+
     public void keyTyped(char typedChar, int keyCode) {
         if (currentScreen != null) {
             currentScreen.keyTyped(typedChar, keyCode);

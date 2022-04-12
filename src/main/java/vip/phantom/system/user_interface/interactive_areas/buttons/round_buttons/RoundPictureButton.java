@@ -3,13 +3,11 @@
  * All rights reserved.
  */
 
-package vip.phantom.system.user_interface.buttons.round_buttons;
+package vip.phantom.system.user_interface.interactive_areas.buttons.round_buttons;
 
 import vip.phantom.api.resources.ResourceLocation;
 import vip.phantom.api.utils.RenderUtil;
-import vip.phantom.system.user_interface.buttons.RoundButton;
-
-import java.awt.*;
+import vip.phantom.system.user_interface.interactive_areas.buttons.RoundButton;
 
 public class RoundPictureButton extends RoundButton {
     private int pictureId;

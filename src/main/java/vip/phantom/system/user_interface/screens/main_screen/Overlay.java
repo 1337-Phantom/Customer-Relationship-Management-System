@@ -1,9 +1,14 @@
 package vip.phantom.system.user_interface.screens.main_screen;
 
 import org.lwjgl.input.Keyboard;
+import vip.phantom.api.font.FontRenderer;
+import vip.phantom.api.font.Fonts;
+import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.CRM;
-import vip.phantom.system.user_interface.buttons.Button;
+import vip.phantom.system.user_interface.Area;
+import vip.phantom.system.user_interface.interactive_areas.buttons.Button;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +16,12 @@ public class Overlay {
 
     public CRM crm = CRM.getCrm();
 
+    protected Area informationArea;
+
     public int width, height;
+
+    protected FontRenderer headlineFr = Fonts.Light12,
+            fr = Fonts.Light10;
 
     public List<Button> buttonList = new ArrayList<>();
 
@@ -25,6 +35,10 @@ public class Overlay {
         }
     }
 
+    public void drawDefaultBackground() {
+        RenderUtil.drawRect(0, 0, width, height, new Color(15, 15, 15, 180));
+    }
+
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         for (Button button : buttonList) {
             if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
@@ -32,6 +46,10 @@ public class Overlay {
                 break;
             }
         }
+    }
+
+    public void buttonPressed(int buttonId) {
+
     }
 
     public void mouseReleased(int mouseX, int mouseY, int state) {
@@ -42,11 +60,11 @@ public class Overlay {
         }
     }
 
-    public void buttonPressed(int buttonId) {
+    public void buttonReleased(int buttonId) {
 
     }
 
-    public void buttonReleased(int buttonId) {
+    public void handleMouseInput(int mouseX, int mouseY) {
 
     }
 

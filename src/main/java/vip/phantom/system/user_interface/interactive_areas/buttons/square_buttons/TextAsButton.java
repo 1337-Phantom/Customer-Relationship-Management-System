@@ -1,6 +1,6 @@
-package vip.phantom.system.user_interface.buttons.square_buttons;
+package vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons;
 
-import vip.phantom.system.user_interface.buttons.Button;
+import vip.phantom.system.user_interface.interactive_areas.buttons.Button;
 
 import java.awt.*;
 

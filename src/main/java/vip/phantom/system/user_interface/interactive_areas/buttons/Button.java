@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package vip.phantom.system.user_interface.buttons;
+package vip.phantom.system.user_interface.interactive_areas.buttons;
 
 import vip.phantom.api.font.FontRenderer;
 import vip.phantom.api.font.Fonts;
@@ -17,7 +17,7 @@ public class Button extends Area {
     public int buttonId;
     protected String text;
 
-    protected FontRenderer fr = Fonts.VERDANA12;
+    protected FontRenderer fr = Fonts.Light12;
 
     protected boolean hovered = false, pressed = false;
 

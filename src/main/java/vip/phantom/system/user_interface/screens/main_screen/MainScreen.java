@@ -10,8 +10,8 @@ import vip.phantom.api.font.Fonts;
 import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.Category;
-import vip.phantom.system.user_interface.buttons.Button;
-import vip.phantom.system.user_interface.buttons.round_buttons.CategoryButton;
+import vip.phantom.system.user_interface.interactive_areas.buttons.Button;
+import vip.phantom.system.user_interface.interactive_areas.buttons.round_buttons.CategoryButton;
 import vip.phantom.system.user_interface.screens.Screen;
 
 import java.awt.*;
@@ -22,9 +22,11 @@ public class MainScreen extends Screen {
 
     public Area sideBar, mainWindow;
 
+    protected FontRenderer fr = Fonts.Light10;
+
     protected float renderY;
 
-    protected FontRenderer headlineFr = Fonts.VERDANA12;
+    protected FontRenderer headlineFr = Fonts.Light12;
     protected Color headlineColor = Color.black;
     protected String headline;
 
@@ -42,7 +44,7 @@ public class MainScreen extends Screen {
         Category[] categories = Category.values();
         for (int i = 0; i < categories.length; i++) {
             Category category = categories[i];
-            CategoryButton categoryButton = new CategoryButton(i, spacerSize, yOffset, sideBar.getWidth() - spacerSize * 2, category.getPictureName(), category);
+            CategoryButton categoryButton = new CategoryButton(i, spacerSize, yOffset, (int) sideBar.getWidth() - spacerSize * 2, category.getPictureName(), category);
             buttonList.add(categoryButton);
             yOffset += categoryButton.getHeight() + spacerSize;
         }
@@ -53,13 +55,16 @@ public class MainScreen extends Screen {
     @Override
     public void drawScreen(int mouseX, int mouseY) {
         renderY = mainWindow.getY() + spacerSize;
-        drawDefaultBackground();
-        /* sidebar */
-        RenderUtil.drawRoundedRect(0, 0, sideBar.getWidth(), sideBar.getHeight(), 5, Color.white.darker(), true, true, false, false);
-        /* headline */
+        super.drawScreen(mouseX, mouseY);
+    }
+
+    public void drawHeadline(int mouseX, int mouseY) {
         headlineFr.drawString("§n" + headline, spacerSize + mainWindow.getX(), renderY, headlineColor);
         renderY += headlineFr.getHeight() + spacerSize;
-        super.drawScreen(mouseX, mouseY);
+    }
+
+    public void drawSidebar(int mouseX, int mouseY) {
+        RenderUtil.drawRoundedRect(0, 0, sideBar.getWidth(), sideBar.getHeight(), 5, Color.white.darker(), true, true, false, false);
     }
 
     @Override

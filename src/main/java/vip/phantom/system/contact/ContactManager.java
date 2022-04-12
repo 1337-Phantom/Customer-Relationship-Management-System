@@ -13,9 +13,14 @@ public class ContactManager {
 
     public ContactManager() {
         addContact(new Contact("Heilmann"));
-        addContact(new Contact("Voss"));
-        addContact(new Contact("Teuschler"));
-        System.out.println("adding");
+        getContactList().get(0).setName("Yorck");
+        getContactList().get(0).setSecondName("Immanuel");
+        getContactList().get(0).setEMail("han.youke@gmx.de");
+        getContactList().get(0).setBirthdate("03.04.2004");
+        getContactList().get(0).setMobilePhoneNumber("0176 54498758");
+        addContact(new Contact("Heilmann"));
+        getContactList().get(1).setName("Sebastian");
+        getContactList().get(1).setBirthdate("14.3.1965");
     }
 
     public void addContact(Contact contact) {

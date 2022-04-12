@@ -1,4 +1,4 @@
-package vip.phantom.system.user_interface.buttons.round_buttons;
+package vip.phantom.system.user_interface.interactive_areas.buttons.round_buttons;
 
 import lombok.Getter;
 import vip.phantom.system.Category;

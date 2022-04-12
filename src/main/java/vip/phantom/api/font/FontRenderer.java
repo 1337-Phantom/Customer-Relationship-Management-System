@@ -245,7 +245,7 @@ public class FontRenderer {
                 final float cWidth = characterData.getWidth() * (sizeHeightPercentage / 100);
                 final float cHeight = characterData.getHeight() * (sizeHeightPercentage / 100);
                 if (underline) {
-                    drawHorizontalLine(charX + MARGIN, charX + cWidth - MARGIN, charY + cHeight / 2f + cHeight / 4f, 2, color);
+                    drawHorizontalLine(charX + MARGIN, charX + cWidth - MARGIN, charY + cHeight / 2f + cHeight / 4f, Math.round(plainFont.getSize() / 11f), color);
                 }
 
 

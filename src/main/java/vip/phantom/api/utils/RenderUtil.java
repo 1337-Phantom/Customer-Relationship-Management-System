@@ -6,11 +6,13 @@
 package vip.phantom.api.utils;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
@@ -38,6 +40,64 @@ public class RenderUtil {
         glVertex2f(x, y + height);
         glVertex2f(x + width, y + height);
         glVertex2f(x + width, y);
+        glEnd();
+        if (texture2DFlag) {
+            glEnable(GL_TEXTURE_2D);
+        }
+        if (!blendFlag) {
+            glDisable(GL_BLEND);
+        }
+        resetGLColor();
+        glPopMatrix();
+    }
+
+    public static void drawVerticalLine(float y, float endY, float x, float lineWidth, boolean rounded, Color color) {
+        float radius = lineWidth / 2f;
+        if (rounded) {
+            drawRect(x - radius, y + radius, x + radius, endY - radius, color);
+            drawCircleAsPoint(x, y + radius, radius, color);
+            drawCircleAsPoint(x, endY - radius, radius, color);
+        } else {
+            drawRect(x - radius, y, x + radius, endY, color);
+        }
+    }
+
+    public static void drawHorizontalLine(float x, float endX, float y, float lineWidth, boolean rounded, Color color) {
+        if (endX - x < lineWidth) {
+            endX = x + lineWidth;
+        }
+        float radius = lineWidth / 2f;
+        if (rounded) {
+            drawRect(x + radius / 2f, y - radius, endX - radius / 2f, y + radius, color);
+            drawCircleAsPoint(x + radius / 2f, y, Math.floor(radius), color);
+            drawCircleAsPoint(endX - radius / 2f, y, Math.floor(radius), color);
+        } else {
+            drawRect(x, y - radius, endX, y + radius, color);
+        }
+    }
+
+    public static void drawOutline(float x, float y, float width, float height, float lineWidth, Color color) {
+        if (width < 0) {
+            width = Math.abs(width);
+            x -= width;
+        }
+        if (height < 0) {
+            height = Math.abs(height);
+            y -= height;
+        }
+        glPushMatrix();
+        final boolean texture2DFlag = glIsEnabled(GL_TEXTURE_2D);
+        final boolean blendFlag = glIsEnabled(GL_BLEND);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_TEXTURE_2D);
+        setGLColor(color);
+        glLineWidth(lineWidth);
+        glBegin(GL_LINE_LOOP);
+        glVertex2f(x + width, y);
+        glVertex2f(x + width, y + height);
+        glVertex2f(x, y + height);
+        glVertex2f(x, y);
         glEnd();
         if (texture2DFlag) {
             glEnable(GL_TEXTURE_2D);
@@ -88,6 +148,32 @@ public class RenderUtil {
                 glDisable(GL_LINE_SMOOTH);
             }
         }
+        if (texture2DFlag) {
+            glEnable(GL_TEXTURE_2D);
+        }
+        if (!blendFlag) {
+            glDisable(GL_BLEND);
+        }
+        resetGLColor();
+        glPopMatrix();
+    }
+
+    /* the circle is much smoother using this method because opengl antialiases/smoothens the rendering */
+    public static void drawCircleAsPoint(double x, double y, double radius, Color color) {
+        glPushMatrix();
+        final boolean texture2DFlag = glIsEnabled(GL_TEXTURE_2D);
+        final boolean blendFlag = glIsEnabled(GL_BLEND);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glDisable(GL_TEXTURE_2D);
+        setGLColor(color);
+        glPointSize((float) (radius * 4f));
+
+        glEnable(GL_POINT_SMOOTH);
+        glBegin(GL_POINTS);
+        glVertex2d(x, y);
+        glEnd();
+
         if (texture2DFlag) {
             glEnable(GL_TEXTURE_2D);
         }
@@ -253,6 +339,40 @@ public class RenderUtil {
 
         // Binds the opengl texture 0.
         return textureId;
+    }
+
+    public static float[] getCurrentScissorBox() {
+        final IntBuffer intBuffer = BufferUtils.createIntBuffer(16);
+        glGetInteger(GL_SCISSOR_BOX, intBuffer);
+        final float[] currentScissorBox = new float[4];
+        for (int i = 0; i < 4; i++) {
+            currentScissorBox[i] = (float) (intBuffer.get(i));
+        }
+        currentScissorBox[1] = Display.getHeight() - (currentScissorBox[1] + currentScissorBox[3]);
+        return currentScissorBox;
+    }
+
+    public static void beginScissor(double x, double y, double width, double height) {
+        if (glIsEnabled(GL_SCISSOR_TEST)) {
+            final float[] scissor = getCurrentScissorBox();
+            x = Math.max(scissor[0], x);
+            if (scissor[0] + scissor[2] < x + width) {
+                width = Math.max(0, scissor[0] + scissor[2] - x);
+            }
+            y = Math.max(scissor[1], y);
+            if (scissor[1] + scissor[3] < y + height) {
+                height = Math.max(0, scissor[1] + scissor[3] - y);
+            }
+        }
+
+        glPushAttrib(GL_SCISSOR_BIT);
+        glEnable(GL_SCISSOR_TEST);
+        glScissor((int) x, (int) (Display.getHeight() - (y + height)), (int) width, (int) height);
+    }
+
+    public static void endScissor() {
+        glDisable(GL_SCISSOR_TEST);
+        glPopAttrib();
     }
 
     public static boolean isHovered(int mouseX, int mouseY, float x, float y, float width, float height) {

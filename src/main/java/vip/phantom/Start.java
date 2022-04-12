@@ -43,11 +43,11 @@ public class Start {
         glOrtho(0, Display.getWidth(), Display.getHeight(), 0, 1, -1);
         glMatrixMode(GL_MODELVIEW);
 
-        CRM application = CRM.getCrm();
-        application.startup();
-        Runtime.getRuntime().addShutdownHook(new Thread(application::shutdownHook));
+        CRM crmSystem = CRM.getCrm();
+        crmSystem.startup();
+        Runtime.getRuntime().addShutdownHook(new Thread(crmSystem::shutdownHook));
 
-        application.displayScreen(new LoginScreen());
+        crmSystem.displayScreen(new LoginScreen());
 
         while (!Display.isCloseRequested()) {
             glViewport(0, 0, Display.getWidth(), Display.getHeight());
@@ -63,21 +63,23 @@ public class Start {
             /*doing all which has to do with mouse*/
             if (Mouse.isCreated()) {
                 while (Mouse.next()) {
+                    int mouseX = Mouse.getX(), mouseY = Display.getHeight() - Mouse.getY();
                     if (Mouse.getEventButtonState()) {
-                        application.mouseClicked(Mouse.getX(), Display.getHeight() - Mouse.getY(), Mouse.getEventButton());
+                        crmSystem.mouseClicked(mouseX, mouseY, Mouse.getEventButton());
                     } else if (Mouse.getEventButton() != -1) {
-                        application.mouseReleased(Mouse.getX(), Display.getHeight() - Mouse.getY(), Mouse.getEventButton());
+                        crmSystem.mouseReleased(mouseX, mouseY, Mouse.getEventButton());
                     }
+                    crmSystem.handleMouseInput(mouseX, mouseY);
                 }
             }
             /*doing all which has to do with keyboard*/
             while (Keyboard.next()) {
                 if (Keyboard.getEventKeyState()) {
-                    application.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+                    crmSystem.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
                 }
             }
             /*doing all which has to do with rendering*/
-            application.drawScreen(Mouse.getX(), Display.getHeight() - Mouse.getY());
+            crmSystem.drawScreen(Mouse.getX(), Display.getHeight() - Mouse.getY());
             Display.update();
         }
     }

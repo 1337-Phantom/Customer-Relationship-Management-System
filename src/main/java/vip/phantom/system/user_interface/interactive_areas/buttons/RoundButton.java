@@ -1,4 +1,4 @@
-package vip.phantom.system.user_interface.buttons;
+package vip.phantom.system.user_interface.interactive_areas.buttons;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -19,13 +19,13 @@ public class RoundButton extends Button {
     }
 
     @Override
-    public void setWidth(int width) {
+    public void setWidth(float width) {
         super.setWidth(width);
         radius = width / 2f;
     }
 
     @Override
-    public void setHeight(int height) {
+    public void setHeight(float height) {
         super.setHeight(height);
         setWidth(height);
     }

@@ -15,8 +15,8 @@ import java.util.Objects;
 public class Fonts {
     private static Fonts INSTANCE;
 
-    public static final FontRenderer VERDANA10 = getFont("Verdana", 10);
-    public static final FontRenderer VERDANA12 = getFont("Verdana", 12);
+    public static final FontRenderer Light10 = getFont("Mono-Light", 10);
+    public static final FontRenderer Light12 = getFont("Mono-Light", 12);
 
     private static FontRenderer getFont(String name, float size) {
         try {
@@ -35,5 +35,3 @@ public class Fonts {
         return INSTANCE;
     }
 }
-        
-    

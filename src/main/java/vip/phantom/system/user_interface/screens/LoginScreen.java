@@ -8,9 +8,7 @@ package vip.phantom.system.user_interface.screens;
 import vip.phantom.api.resources.ResourceLocation;
 import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.Category;
-import vip.phantom.system.user_interface.buttons.square_buttons.NormalButton;
-import vip.phantom.system.user_interface.screens.main_screen.MainScreen;
-import vip.phantom.system.user_interface.screens.main_screen.home.HomeScreen;
+import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.NormalButton;
 
 public class LoginScreen extends Screen {
 
