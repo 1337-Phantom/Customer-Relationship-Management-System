@@ -32,8 +32,8 @@ public class AddContactOverlay extends Overlay {
             entryFields.put("§c*§rNachname", new TextField(0, 0, 0, "", fr, "[a-zA-Z]{2,}"));
             entryFields.put("Geburtsdatum", new TextField(0, 0, 0, "", fr, "()|(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:19|20)\\d{2})"));
             entryFields.put("E-Mail", new TextField(0, 0, 0, "", fr, "()|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"));
-            entryFields.put("Telefon", new TextField(0, 0, 0, "", fr, "()|^(\\+[0-9]{1,3}|0)[0-9]{3}( ){0,1}[0-9]{7,8}\\b"));
-            entryFields.put("Mobiltelefon", new TextField(0, 0, 0, "", fr, "()|^(\\+[0-9]{1,3}|0)[0-9]{3}( ){0,1}[0-9]{7,8}\\b"));
+            entryFields.put("Telefon", new TextField(0, 0, 0, "", fr, "()|^(+[0-9]{1,3}|0)[0-9]{3}( ){0,1}[0-9]{7,8}"));
+            entryFields.put("Mobiltelefon", new TextField(0, 0, 0, "", fr, "()|^(+[0-9]{1,3}|0)[0-9]{3}( ){0,1}[0-9]{7,8}"));
 
             entryFields.put("Straße, Hausnummer", new TextField(0, 0, 0, "", fr, "()|[a-zA-Z]+,( ){0,1}[0-9]{1,3}[a-zA-Z]*"));
             entryFields.put("PLZ", new TextField(0, 0, 0, "", fr, "()|[0-9]{5}"));

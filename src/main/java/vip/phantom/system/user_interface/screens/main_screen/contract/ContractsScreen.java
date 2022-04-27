@@ -56,7 +56,7 @@ public class ContractsScreen extends MainScreen {
         ContractManager.INSTANCE.getContractList().forEach(contract -> deliveryDates.add(contract.getDeliveryDate()));
         table.put("Vertragsende", deliveryDates);
 
-        addContractButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon");
+        addContractButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", Color.black);
     }
 
     @Override

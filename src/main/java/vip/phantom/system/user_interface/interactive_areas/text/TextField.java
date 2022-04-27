@@ -36,7 +36,7 @@ public class TextField {
     private long lastClickTime = 0;
     private int cursorPosition = 0, selectionPosition = 0;
 
-    private final Pattern pattern;
+    private Pattern pattern;
     private boolean matchesPattern;
 
     @Getter
@@ -54,6 +54,11 @@ public class TextField {
         this.placeHolder = placeholder + "...";
         this.fr = fr;
         this.height = fr.getHeight("I") + 2;
+        pattern = Pattern.compile(regex);
+        writeText("");
+    }
+
+    public void setRegex(String regex) {
         pattern = Pattern.compile(regex);
         writeText("");
     }

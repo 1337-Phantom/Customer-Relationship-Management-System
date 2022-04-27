@@ -49,7 +49,7 @@ public class ContactsScreen extends MainScreen {
         ContactManager.INSTANCE.getContactList().forEach(contact -> addressList.add(contact.getStreetAndNumber()));
         table.put("Adresse", addressList);
 
-        addContactButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon");
+        addContactButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", Color.black);
     }
 
     @Override

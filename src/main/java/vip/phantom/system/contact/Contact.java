@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 @Getter
@@ -108,7 +109,7 @@ public class Contact {
 
     public String getBirthdateAsString() {
         if (birthdate != null) {
-            return birthdate.toString();
+            return birthdate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         }
         return noInformation;
     }
