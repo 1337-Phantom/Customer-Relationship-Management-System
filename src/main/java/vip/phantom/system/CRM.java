@@ -7,12 +7,20 @@ package vip.phantom.system;
 
 import lombok.Getter;
 import org.lwjgl.opengl.Display;
+import vip.phantom.api.file.FileManager;
 import vip.phantom.api.font.Fonts;
+import vip.phantom.system.contact.ContactManager;
+import vip.phantom.system.contract.ContractManager;
+import vip.phantom.system.task.TaskManager;
 import vip.phantom.system.user_interface.screens.Screen;
 
 public class CRM {
 
     private static CRM crm;
+
+    public Account currentAccount;
+
+    public Organisation selectedOrganisation;
 
     public Screen currentScreen = null;
 
@@ -25,6 +33,22 @@ public class CRM {
 
     public void startup() {
         Fonts.getINSTANCE();
+        currentAccount = new Account("heilmann.yorck", "Yorck Heilmann", Role.ADMIN);
+        Organisation orga = new Organisation("Standard");
+        currentAccount.addOrganisation(orga, Role.ADMIN);
+//        selectedOrganisation = orga;
+//        currentAccount.addOrganisation(new Organisation("Mojang"), Role.ADMIN);
+//        currentAccount.addOrganisation(new Organisation("Phantom.vip"), Role.ADMIN);
+//        currentAccount.addOrganisation(new Organisation("Uni"), Role.ADMIN);
+
+        FileManager.INSTANCE.loadAllFiles();
+    }
+
+    public void setSelectedOrganisation(Organisation organisation) {
+        selectedOrganisation = organisation;
+        if (currentScreen != null) {
+            currentScreen.initScreen();
+        }
     }
 
     public void drawScreen(int mouseX, int mouseY) {
@@ -82,7 +106,7 @@ public class CRM {
     }
 
     public void shutdownHook() {
-
+        FileManager.INSTANCE.saveAllFiles();
     }
 
     public static CRM getCrm() {

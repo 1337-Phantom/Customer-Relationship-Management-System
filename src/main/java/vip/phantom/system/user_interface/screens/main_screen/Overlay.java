@@ -39,13 +39,14 @@ public class Overlay {
         RenderUtil.drawRect(0, 0, width, height, new Color(15, 15, 15, 180));
     }
 
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         for (Button button : buttonList) {
             if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
                 buttonPressed(button.buttonId);
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public void buttonPressed(int buttonId) {

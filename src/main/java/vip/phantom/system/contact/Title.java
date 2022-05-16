@@ -3,9 +3,19 @@ package vip.phantom.system.contact;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor @Getter
+@AllArgsConstructor
+@Getter
 public enum Title {
 
-    MR("Mr."), MS("Ms."), DR("Dr."), PROF("Prof.");
+    MR("Herr"), MS("Frau"), DIVERS("Divers"), DR("Doktor"), PROF("Professor");
     private final String string;
+
+    public static Title getTitleFromString(String string) {
+        for (Title value : values()) {
+            if (value.string.equals(string)){
+                return value;
+            }
+        }
+        return DIVERS;
+    }
 }

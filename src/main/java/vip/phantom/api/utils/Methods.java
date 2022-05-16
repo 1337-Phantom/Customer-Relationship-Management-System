@@ -1,5 +1,7 @@
 package vip.phantom.api.utils;
 
+import java.time.LocalDate;
+
 public class Methods {
 
     public static String coverString(String text, int startIndex, int endIndex) {
@@ -11,6 +13,11 @@ public class Methods {
 
     public static float clamp(float num, float min, float max) {
         return Math.min(max, Math.max(min, num));
+    }
+
+    public static LocalDate getDateFromString(String string) {
+        String[] parts = string.split("\\.");
+        return parts.length == 3 ? LocalDate.of(Integer.parseInt(parts[2]), Integer.parseInt(parts[1]), Integer.parseInt(parts[0])) : null;
     }
 
 }

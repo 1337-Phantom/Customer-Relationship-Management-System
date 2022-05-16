@@ -1,9 +1,6 @@
 package vip.phantom.system.contact;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +8,7 @@ import java.time.temporal.ChronoUnit;
 
 @Getter
 @Setter
+@AllArgsConstructor
 public class Contact {
 
     private final String noInformation = "N/A";
@@ -29,12 +27,14 @@ public class Contact {
     private int postalCode;
     private String city, country;
 
+    private long lastLookedAt;
+
     public Contact(String familyName) {
         this.familyName = familyName;
+        lookedAtContact();
     }
 
-    public Contact(String accountName, Title title, String name, String secondName, String familyName, LocalDate birthdate, String eMail, String phoneNumber, String mobilePhoneNumber, String streetAndNumber, int postalCode, String city, String country) {
-        this.accountName = accountName;
+    public Contact(Title title, String name, String secondName, String familyName, LocalDate birthdate, String eMail, String phoneNumber, String mobilePhoneNumber, String streetAndNumber, int postalCode, String city, String country, long lastLookedAt) {
         this.title = title;
         this.name = name;
         this.secondName = secondName;
@@ -47,6 +47,7 @@ public class Contact {
         this.postalCode = postalCode;
         this.city = city;
         this.country = country;
+        this.lastLookedAt = lastLookedAt;
     }
 
     public String getFullName() {
@@ -95,7 +96,7 @@ public class Contact {
         return streetAndNumber != null && !streetAndNumber.equals("") ? streetAndNumber : noInformation;
     }
 
-    public String getPostalCode() {
+    public String getPostalCodeAsString() {
         return postalCode != 0 ? String.valueOf(postalCode) : noInformation;
     }
 
@@ -123,5 +124,9 @@ public class Contact {
 
     public String getPhoneNumber() {
         return phoneNumber != null && !phoneNumber.equals("") ? phoneNumber : noInformation;
+    }
+
+    public void lookedAtContact() {
+        lastLookedAt = System.currentTimeMillis();
     }
 }

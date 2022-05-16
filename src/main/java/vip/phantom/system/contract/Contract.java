@@ -5,6 +5,7 @@ import lombok.Setter;
 import vip.phantom.system.contact.Contact;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
 public class Contract {
@@ -16,12 +17,14 @@ public class Contract {
     private Contact customer;
     private ContractStatus status;
 
+    @Getter @Setter
     private LocalDate startDate, deliveryDate;
 
-    @Setter @Getter
+    @Setter
+    @Getter
     private String description = "";
 
-    @Setter
+    @Setter @Getter
     private float price;
 
     public Contract(String headline, Contact customer, int timeForContractInMonth) {
@@ -42,7 +45,7 @@ public class Contract {
         return "0".repeat(Math.max(0, longestNumberLength - numberLength)) + contractNumber;
     }
 
-    public String getPrice() {
+    public String getPriceAsString() {
         return String.format("%.2f", price) + "€";
     }
 
@@ -50,12 +53,12 @@ public class Contract {
         return status.getString();
     }
 
-    public String getStartDate() {
-        return startDate.toString();
+    public String getStartDateAsString() {
+        return startDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
-    public String getDeliveryDate() {
-        return deliveryDate.toString();
+    public String getDeliveryDateAsString() {
+        return deliveryDate.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     public String getDaysLeft() {

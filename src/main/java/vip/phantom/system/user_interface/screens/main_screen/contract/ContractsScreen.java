@@ -1,13 +1,10 @@
 package vip.phantom.system.user_interface.screens.main_screen.contract;
 
 import vip.phantom.api.utils.RenderUtil;
-import vip.phantom.system.contact.ContactManager;
 import vip.phantom.system.contract.ContractManager;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.round_buttons.RoundPictureButton;
 import vip.phantom.system.user_interface.screens.main_screen.MainScreen;
-import vip.phantom.system.user_interface.screens.main_screen.contact.AddContactOverlay;
-import vip.phantom.system.user_interface.screens.main_screen.contact.ContactOverlay;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -44,27 +41,25 @@ public class ContractsScreen extends MainScreen {
         ContractManager.INSTANCE.getContractList().forEach(contract -> stages.add(contract.getStatusAsString()));
         table.put("Status", stages);
         List<String> prices = new ArrayList<>();
-        ContractManager.INSTANCE.getContractList().forEach(contract -> prices.add(contract.getPrice()));
+        ContractManager.INSTANCE.getContractList().forEach(contract -> prices.add(contract.getPriceAsString()));
         table.put("Preis", prices);
         List<String> daysLeft = new ArrayList<>();
         ContractManager.INSTANCE.getContractList().forEach(contract -> daysLeft.add(contract.getDaysLeft()));
         table.put("Tage übrig", daysLeft);
         List<String> beginDates = new ArrayList<>();
-        ContractManager.INSTANCE.getContractList().forEach(contract -> beginDates.add(contract.getStartDate()));
+        ContractManager.INSTANCE.getContractList().forEach(contract -> beginDates.add(contract.getStartDateAsString()));
         table.put("Vertragsbeginn", beginDates);
         List<String> deliveryDates = new ArrayList<>();
-        ContractManager.INSTANCE.getContractList().forEach(contract -> deliveryDates.add(contract.getDeliveryDate()));
+        ContractManager.INSTANCE.getContractList().forEach(contract -> deliveryDates.add(contract.getDeliveryDateAsString()));
         table.put("Vertragsende", deliveryDates);
 
         addContractButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", Color.black);
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY) {
-        drawDefaultBackground();
-        drawSidebar(mouseX, mouseY);
+    public void drawMainArea(int mouseX, int mouseY) {
         drawHeadline(mouseX, mouseY);
-        RenderUtil.drawRect(mainWindow.getX(), renderY, mainWindow.getWidth(), mainWindow.getHeight() - (renderY - mainWindow.getY()), Color.blue);
+//        RenderUtil.drawRect(mainWindow.getX(), renderY, mainWindow.getWidth(), mainWindow.getHeight() - (renderY - mainWindow.getY()), Color.blue);
 
         renderY += spacerSize;
         Object[] keyArray = table.keySet().toArray();
@@ -80,7 +75,7 @@ public class ContractsScreen extends MainScreen {
         }
 
         addContractButton.drawScreen(mouseX, mouseY);
-        super.drawScreen(mouseX, mouseY);
+        super.drawMainArea(mouseX, mouseY);
     }
 
     private float[] drawStringColumnAt(int mouseX, int mouseY, float x, float y, String columnName, List<String> valueList) {
@@ -116,19 +111,22 @@ public class ContractsScreen extends MainScreen {
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        if (activeOverlay == null) {
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (!super.mouseClicked(mouseX, mouseY, mouseButton) && activeOverlay == null) {
             if (addContractButton.mouseClicked(mouseX, mouseY, mouseButton)) {
                 showOverlay(new AddContractOverlay());
+                return true;
             } else {
-                areaByIndex.forEach((integer, area) -> {
+                for (Integer integer : areaByIndex.keySet()) {
+                    Area area = areaByIndex.get(integer);
                     if (area.isHovered(mouseX, mouseY)) {
                         showOverlay(new ContractOverlay(ContractManager.INSTANCE.getContractList().get(integer)));
+                        return true;
                     }
-                });
+                }
             }
         }
+        return false;
     }
 
 

@@ -1,13 +1,16 @@
-package vip.phantom.system.user_interface.screens.main_screen.contract;
+package vip.phantom.system.user_interface.screens.main_screen.tasks;
 
 import org.lwjgl.input.Keyboard;
 import vip.phantom.api.font.Fonts;
 import vip.phantom.api.utils.Methods;
 import vip.phantom.api.utils.RenderUtil;
+import vip.phantom.system.Account;
 import vip.phantom.system.contact.Contact;
 import vip.phantom.system.contact.ContactManager;
-import vip.phantom.system.contract.Contract;
-import vip.phantom.system.contract.ContractManager;
+import vip.phantom.system.contact.Title;
+import vip.phantom.system.task.Task;
+import vip.phantom.system.task.TaskManager;
+import vip.phantom.system.task.TaskStatus;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.NormalButton;
 import vip.phantom.system.user_interface.interactive_areas.text.TextField;
@@ -17,9 +20,8 @@ import java.awt.*;
 import java.time.LocalDate;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.regex.Pattern;
 
-public class AddContractOverlay extends Overlay {
+public class AddTaskOverlay extends Overlay {
 
     private LinkedHashMap<String, TextField> entryFields = new LinkedHashMap<>();
     private float textFieldX;
@@ -28,14 +30,13 @@ public class AddContractOverlay extends Overlay {
     public void initOverlay() {
         super.initOverlay();
         informationArea = new Area(width / 4f, height / 4f, width / 2f, height / 2f);
-
         if (entryFields.isEmpty()) {
             entryFields.put("§c*§rTitel", new TextField(0, 0, 0, "", fr, "(.)+"));
-            entryFields.put("§c*§rKunde", new TextField(0, 0, 0, "", fr, "(.)+"));
-            entryFields.put("§c*§rDatum/Zeitraum", new TextField(0, 0, 0, "", fr, "(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:19|20)\\d{2})|[0-9]+"));
-            entryFields.put("Preis", new TextField(0, 0, 0, "", fr, "()|[0-9]+((\\.|\\,)[0-9]{0,2}|())"));
+            entryFields.put("Teilnehmer", new TextField(0, 0, 0, "", fr));
+            entryFields.put("§c*§rAbgabedatum", new TextField(0, 0, 0, "", fr, "(3[01]|[12][0-9]|0?[1-9])\\.(1[012]|0?[1-9])\\.((?:19|20)\\d{2})"));
             entryFields.put("Beschreibung", new TextField(0, 0, 0, "", fr));
         }
+
         for (TextField value : entryFields.values()) {
             value.setWidth(0);
         }
@@ -48,7 +49,6 @@ public class AddContractOverlay extends Overlay {
             }
         }
         textFieldX += informationArea.getX() + 10;
-
         int buttonHeight = (int) Fonts.Light12.getHeight();
         buttonList.add(new NormalButton(0, (int) informationArea.getX() + 10, (int) (informationArea.getY() + informationArea.getHeight() - buttonHeight - 5), (int) (informationArea.getWidth() / 2f - 20), buttonHeight, "Abbrechen"));
         buttonList.add(new NormalButton(1, (int) (informationArea.getX() + informationArea.getWidth() / 2f + 5), (int) (informationArea.getY() + informationArea.getHeight() - buttonHeight - 5), (int) (informationArea.getWidth() / 2f - 20), buttonHeight, "Hinzufügen"));
@@ -60,7 +60,7 @@ public class AddContractOverlay extends Overlay {
         RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), Color.green);
         float renderY = informationArea.getY();
         RenderUtil.beginScissor(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight());
-        headlineFr.drawString("§nNeuer Vertrag", informationArea.getX(), renderY, Color.black);
+        headlineFr.drawString("§nNeue Aufgabe", informationArea.getX(), renderY, Color.black);
         renderY += headlineFr.getHeight();
 
         for (String s : entryFields.keySet()) {
@@ -74,7 +74,6 @@ public class AddContractOverlay extends Overlay {
             renderY += textField.getHeight() + 2;
         }
         RenderUtil.endScissor();
-
         super.drawScreen(mouseX, mouseY);
     }
 
@@ -120,7 +119,10 @@ public class AddContractOverlay extends Overlay {
     @Override
     public void buttonPressed(int buttonId) {
         switch (buttonId) {
-            case 0 -> crm.currentScreen.closeOverlay();
+            case 0 -> {
+                crm.currentScreen.closeOverlay();
+                System.out.println("hallo");
+            }
             case 1 -> {
                 boolean canAdd = true;
                 for (TextField value : entryFields.values()) {
@@ -130,25 +132,22 @@ public class AddContractOverlay extends Overlay {
                     }
                 }
                 if (canAdd) {
-                    String time = entryFields.get("§c*§rDatum/Zeitraum").getText();
-                    LocalDate localDate;
-                    if (Pattern.matches("[0-9]+", time)) {
-                        localDate = LocalDate.now().plusMonths(Integer.parseInt(time));
-                    } else {
-                        localDate = Methods.getDateFromString(time);
-                    }
-                    final Contract newContract = new Contract(entryFields.get("§c*§rTitel").getText(), ContactManager.INSTANCE.getContactList().isEmpty() ? new Contact("Unknown") : ContactManager.INSTANCE.getContactList().get(0), localDate);
-                    if (!entryFields.get("Preis").getText().equals("")) {
-                        newContract.setPrice(Float.parseFloat(entryFields.get("Preis").getText()));
-                    }
-                    if (!entryFields.get("Beschreibung").getText().equals("")) {
-                        newContract.setDescription(entryFields.get("Beschreibung").getText());
-                    }
-                    ContractManager.INSTANCE.addContract(newContract);
+                    String headline = entryFields.get("§c*§rTitel").getText();
+                    Account creator = crm.currentAccount;
+                    LocalDate entryDate = LocalDate.now();
+                    LocalDate latestDate = Methods.getDateFromString(entryFields.get("§c*§rAbgabedatum").getText());
+                    TaskStatus taskStatus = TaskStatus.PENDING;
+                    String description = entryFields.get("Beschreibung").getText();
+
+                    Task task = new Task(headline, creator, entryDate, latestDate, taskStatus, description);
+
+                    TaskManager.INSTANCE.addTask(task);
+
                     crm.currentScreen.closeOverlay();
                 }
             }
         }
         super.buttonPressed(buttonId);
     }
+
 }

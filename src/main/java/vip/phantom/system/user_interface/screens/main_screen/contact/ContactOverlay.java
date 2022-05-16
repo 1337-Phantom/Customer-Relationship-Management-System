@@ -26,8 +26,9 @@ public class ContactOverlay extends Overlay {
     @Override
     public void initOverlay() {
         super.initOverlay();
-        System.out.println("Initing new Overlay");
         informationArea = new Area(width / 4f, height / 4f, width / 2f, height / 2f);
+
+        shownContact.lookedAtContact();
 
         data.put("Name", shownContact.getName());
         data.put("Zweitname", shownContact.getSecondName());
@@ -37,7 +38,7 @@ public class ContactOverlay extends Overlay {
         data.put("Telefonnummer", shownContact.getPhoneNumber());
         data.put("Handynummer", shownContact.getMobilePhoneNumber());
         data.put("Wohnsitz", shownContact.getStreetAndNumber());
-        data.put("PLZ", shownContact.getPostalCode());
+        data.put("PLZ", shownContact.getPostalCodeAsString());
         data.put("Stadt", shownContact.getCity());
         data.put("Land", shownContact.getCountry());
 
@@ -53,7 +54,7 @@ public class ContactOverlay extends Overlay {
         drawDefaultBackground();
         RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), Color.green);
         float renderY = informationArea.getY();
-        headlineFr.drawString("§n" + shownContact.getFullName(), informationArea.getX(), renderY, Color.black);
+        headlineFr.drawString("§n" + (shownContact.getTitle() != null ? shownContact.getTitle().getString() + " " : "") + shownContact.getFullName(), informationArea.getX(), renderY, Color.black);
         renderY += headlineFr.getHeight();
         editingField.setY(renderY + fr.getHeight() * fieldEditing);
 
@@ -80,12 +81,15 @@ public class ContactOverlay extends Overlay {
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (!informationArea.isHovered(mouseX, mouseY) && mouseButton == 0) {
-            crm.currentScreen.closeOverlay();
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (!super.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (!informationArea.isHovered(mouseX, mouseY) && mouseButton == 0) {
+                crm.currentScreen.closeOverlay();
+                return true;
+            }
+            return editingField.mouseClicked(mouseX, mouseY, mouseButton);
         }
-        editingField.mouseClicked(mouseX, mouseY, mouseButton);
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+        return false;
     }
 
     @Override
@@ -102,22 +106,19 @@ public class ContactOverlay extends Overlay {
 
     @Override
     public void buttonPressed(int buttonId) {
-        System.out.println("-------------");
         if (buttonList.get(buttonId) instanceof EditButton editButton) {
-            System.out.println(buttonId + ": " + editButton.isEditing());
             switch (buttonId) {
                 case 0 -> {
                     if (!editButton.isEditing()) {
                         shownContact.setName(editingField.getText());
                         data.replace("Name", shownContact.getName());
                     } else {
-                        System.out.println("now");
                         editingField.setText(shownContact.getName());
                         editingField.setRegex("()|[a-zA-Z]{2,}");
                     }
                 }
                 case 1 -> {
-                    if (!editButton.isEditing()){
+                    if (!editButton.isEditing()) {
                         shownContact.setSecondName(editingField.getText());
                         data.replace("Zweitname", shownContact.getSecondName());
                     } else {
@@ -126,7 +127,7 @@ public class ContactOverlay extends Overlay {
                     }
                 }
                 case 2 -> {
-                    if (!editButton.isEditing()){
+                    if (!editButton.isEditing()) {
                         shownContact.setFamilyName(editingField.getText());
                         data.replace("Nachname", shownContact.getFamilyName());
                     } else {
@@ -182,9 +183,9 @@ public class ContactOverlay extends Overlay {
                 case 8 -> {
                     if (!editButton.isEditing()) {
                         shownContact.setPostalCode(Integer.parseInt(editingField.getText()));
-                        data.replace("PLZ", shownContact.getPostalCode());
+                        data.replace("PLZ", shownContact.getPostalCodeAsString());
                     } else {
-                        editingField.setText(shownContact.getPostalCode());
+                        editingField.setText(shownContact.getPostalCodeAsString());
                         editingField.setRegex("()|[0-9]{5}");
                     }
                 }

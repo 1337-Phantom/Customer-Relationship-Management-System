@@ -15,6 +15,7 @@ import java.util.Objects;
 public class Fonts {
     private static Fonts INSTANCE;
 
+    public static final FontRenderer Light8 = getFont("Mono-Light", 8);
     public static final FontRenderer Light10 = getFont("Mono-Light", 10);
     public static final FontRenderer Light12 = getFont("Mono-Light", 12);
 

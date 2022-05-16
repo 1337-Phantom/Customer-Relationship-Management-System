@@ -1,7 +1,5 @@
 package vip.phantom.system.user_interface.screens.main_screen.contact;
 
-import vip.phantom.api.font.FontRenderer;
-import vip.phantom.api.font.Fonts;
 import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.contact.ContactManager;
 import vip.phantom.system.user_interface.Area;
@@ -53,11 +51,9 @@ public class ContactsScreen extends MainScreen {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY) {
-        drawDefaultBackground();
-        drawSidebar(mouseX, mouseY);
+    public void drawMainArea(int mouseX, int mouseY) {
         drawHeadline(mouseX, mouseY);
-        RenderUtil.drawRect(mainWindow.getX(), renderY, mainWindow.getWidth(), mainWindow.getHeight() - (renderY - mainWindow.getY()), Color.blue);
+//        RenderUtil.drawRect(mainWindow.getX(), renderY, mainWindow.getWidth(), mainWindow.getHeight() - (renderY - mainWindow.getY()), Color.blue);
 
         renderY += spacerSize;
         Object[] keyArray = table.keySet().toArray();
@@ -73,7 +69,7 @@ public class ContactsScreen extends MainScreen {
         }
 
         addContactButton.drawScreen(mouseX, mouseY);
-        super.drawScreen(mouseX, mouseY);
+        super.drawMainArea(mouseX, mouseY);
     }
 
     private float[] drawStringColumnAt(int mouseX, int mouseY, float x, float y, String columnName, List<String> valueList) {
@@ -109,18 +105,21 @@ public class ContactsScreen extends MainScreen {
     }
 
     @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        if (activeOverlay == null) {
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (!super.mouseClicked(mouseX, mouseY, mouseButton) && activeOverlay == null) {
             if (addContactButton.mouseClicked(mouseX, mouseY, mouseButton)) {
                 showOverlay(new AddContactOverlay());
+                return true;
             } else {
-                areaByIndex.forEach((integer, area) -> {
+                for (Integer integer : areaByIndex.keySet()) {
+                    Area area = areaByIndex.get(integer);
                     if (area.isHovered(mouseX, mouseY)) {
                         showOverlay(new ContactOverlay(ContactManager.INSTANCE.getContactList().get(integer)));
+                        return true;
                     }
-                });
+                }
             }
         }
+        return false;
     }
 }

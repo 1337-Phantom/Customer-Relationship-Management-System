@@ -55,16 +55,18 @@ public class Screen {
         RenderUtil.drawRect(0, 0, width, height, Color.white);
     }
 
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (activeOverlay != null) {
-            activeOverlay.mouseClicked(mouseX, mouseY, mouseButton);
+            return activeOverlay.mouseClicked(mouseX, mouseY, mouseButton);
         } else {
             for (Button button : buttonList) {
                 if (button.mouseClicked(mouseX, mouseY, mouseButton)) {
                     buttonPressed(button.buttonId);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     public void buttonPressed(int buttonId) {
@@ -108,5 +110,14 @@ public class Screen {
             activeOverlay.setResolution(width, height);
             activeOverlay.initOverlay();
         }
+    }
+
+    public Button getButtonById(int buttonId) {
+        for (Button button : buttonList) {
+            if (buttonId == button.buttonId) {
+                return button;
+            }
+        }
+        return null;
     }
 }

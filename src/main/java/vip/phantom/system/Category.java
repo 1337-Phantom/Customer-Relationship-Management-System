@@ -17,13 +17,13 @@ import vip.phantom.system.user_interface.screens.main_screen.tasks.TasksScreen;
 @AllArgsConstructor
 @Getter
 public enum Category {
-    HOME("HomeIcon", new HomeScreen()),
-    CONTACTS("ContactsIcon", new ContactsScreen()),
-    CONTRACTS("ContractsIcon", new ContractsScreen()),
-    CALENDAR("CalendarIcon", new CalendarScreen()),
-    TASKS("TasksIcon", new TasksScreen())
-    ;
+    HOME("Hauptmenü", "HomeIcon", new HomeScreen()),
+    CONTACTS("Kontakte", "ContactsIcon", new ContactsScreen()),
+    CONTRACTS("Verträge", "ContractsIcon", new ContractsScreen()),
+    CALENDAR("Terminkalender", "CalendarIcon", new CalendarScreen()),
+    TASKS("Aufgaben", "TasksIcon", new TasksScreen());
 
+    private String string;
     private String pictureName;
     private Screen categoryScreen;
 }

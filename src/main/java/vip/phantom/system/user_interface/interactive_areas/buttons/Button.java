@@ -5,6 +5,7 @@
 
 package vip.phantom.system.user_interface.interactive_areas.buttons;
 
+import lombok.Getter;
 import vip.phantom.api.font.FontRenderer;
 import vip.phantom.api.font.Fonts;
 import vip.phantom.api.utils.RenderUtil;
@@ -15,6 +16,7 @@ import java.awt.*;
 public class Button extends Area {
 
     public int buttonId;
+    @Getter
     protected String text;
 
     protected FontRenderer fr = Fonts.Light12;

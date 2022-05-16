@@ -58,7 +58,7 @@ public class RenderUtil {
             drawCircleAsPoint(x, y + radius, radius, color);
             drawCircleAsPoint(x, endY - radius, radius, color);
         } else {
-            drawRect(x - radius, y, x + radius, endY, color);
+            drawRect(x - radius, y, radius, endY - y, color);
         }
     }
 
@@ -68,11 +68,11 @@ public class RenderUtil {
         }
         float radius = lineWidth / 2f;
         if (rounded) {
-            drawRect(x + radius / 2f, y - radius, endX - radius / 2f, y + radius, color);
+            drawRect(x + radius / 2f, y - radius, endX - radius / 2f, radius, color);
             drawCircleAsPoint(x + radius / 2f, y, Math.floor(radius), color);
             drawCircleAsPoint(endX - radius / 2f, y, Math.floor(radius), color);
         } else {
-            drawRect(x, y - radius, endX, y + radius, color);
+            drawRect(x, y - radius, endX - x, radius, color);
         }
     }
 
@@ -158,7 +158,7 @@ public class RenderUtil {
         glPopMatrix();
     }
 
-    /* the circle is much smoother using this method because opengl antialiases/smoothens the rendering */
+    /* the circle is much smoother using this method because opengl antianalyses/smoothens the rendering */
     public static void drawCircleAsPoint(double x, double y, double radius, Color color) {
         glPushMatrix();
         final boolean texture2DFlag = glIsEnabled(GL_TEXTURE_2D);

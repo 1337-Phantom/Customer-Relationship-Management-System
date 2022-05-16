@@ -1,6 +1,7 @@
 package vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons;
 
 import lombok.Getter;
+import lombok.Setter;
 import vip.phantom.api.resources.ResourceLocation;
 import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.user_interface.interactive_areas.buttons.Button;
@@ -9,7 +10,7 @@ import java.awt.*;
 
 public class EditButton extends Button {
 
-    @Getter
+    @Getter @Setter
     private boolean editing = false;
 
     private int pictureId;

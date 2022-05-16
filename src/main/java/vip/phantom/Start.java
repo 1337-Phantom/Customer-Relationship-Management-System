@@ -80,6 +80,7 @@ public class Start {
             }
             /*doing all which has to do with rendering*/
             crmSystem.drawScreen(Mouse.getX(), Display.getHeight() - Mouse.getY());
+            Display.sync(120);
             Display.update();
         }
     }
