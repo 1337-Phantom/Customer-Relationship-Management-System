@@ -8,7 +8,6 @@ package vip.phantom.system.user_interface.screens;
 import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.CRM;
 import vip.phantom.system.user_interface.interactive_areas.buttons.Button;
-import vip.phantom.system.user_interface.screens.main_screen.Overlay;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -52,7 +51,7 @@ public class Screen {
     }
 
     public void drawDefaultBackground() {
-        RenderUtil.drawRect(0, 0, width, height, Color.white);
+        RenderUtil.drawRect(0, 0, width, height, new Color(70, 70, 70));
     }
 
     public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {

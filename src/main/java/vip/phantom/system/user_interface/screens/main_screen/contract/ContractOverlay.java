@@ -6,10 +6,9 @@ import vip.phantom.system.contract.Contract;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.EditButton;
 import vip.phantom.system.user_interface.interactive_areas.text.TextField;
-import vip.phantom.system.user_interface.screens.main_screen.Overlay;
+import vip.phantom.system.user_interface.screens.Overlay;
 
 import java.awt.*;
-import java.time.LocalDate;
 import java.util.LinkedHashMap;
 
 public class ContractOverlay extends Overlay {
@@ -39,7 +38,7 @@ public class ContractOverlay extends Overlay {
         data.put("Beschreibung", "");
 
         for (int i = 0; i < 4; i++) {
-            buttonList.add(new EditButton(i, 0, 0, (int) fr.getHeight(), (int) fr.getHeight(), Color.black));
+            buttonList.add(new EditButton(i, 0, 0, (int) fr.getHeight(), (int) fr.getHeight(), Color.white));
         }
         editingField = new TextField(0, 0, 200, "", fr);
         editingField.setShown(false);
@@ -48,10 +47,10 @@ public class ContractOverlay extends Overlay {
     @Override
     public void drawScreen(int mouseX, int mouseY) {
         drawDefaultBackground();
-        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), Color.green);
+        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), new Color(60, 60, 60));
 
         float renderY = informationArea.getY();
-        headlineFr.drawString("§n" + shownContract.getHeadline(), informationArea.getX(), renderY, Color.black);
+        headlineFr.drawString("§n" + shownContract.getHeadline(), informationArea.getX(), renderY, Color.white);
         renderY += headlineFr.getHeight();
 //        editingField.setY(renderY + fr.getHeight() * (fi);
 
@@ -59,13 +58,13 @@ public class ContractOverlay extends Overlay {
         for (String s : data.keySet()) {
             String content = data.get(s);
             float renderX = informationArea.getX();
-            fr.drawString(s + ": ", renderX, renderY, Color.black);
+            fr.drawString(s + ": ", renderX, renderY, Color.white);
             renderX += fr.getWidth(s + ": ") + 5;
             if (editingField.isShown() && fieldEditing + 3 == i) {
                 editingField.setPosition(renderX, renderY);
                 renderX += editingField.getWidth() + 5;
             } else {
-                fr.drawString(content, renderX, renderY, Color.black);
+                fr.drawString(content, renderX, renderY, Color.white);
                 renderX += fr.getWidth(content) + 5;
             }
             if (i >= 3) {
@@ -87,7 +86,7 @@ public class ContractOverlay extends Overlay {
                 renderY += fr.getHeight();
                 renderX = beginX;
             }
-            fr.drawString(word, renderX, renderY, Color.black);
+            fr.drawString(word, renderX, renderY, Color.white);
             renderX += wordWidth;
         }
 
@@ -98,6 +97,10 @@ public class ContractOverlay extends Overlay {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (!super.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (!informationArea.isHovered(mouseX, mouseY)) {
+                crm.currentScreen.closeOverlay();
+                return true;
+            }
             return editingField.mouseClicked(mouseX, mouseY, mouseButton);
         }
         return false;

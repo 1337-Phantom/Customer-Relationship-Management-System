@@ -21,6 +21,7 @@ public class Task {
     public LocalDate entryDate;
 
     public List<Account> participants = new ArrayList<>();
+    @Getter
     public LocalDate latestDate;
 
     public TaskStatus status;

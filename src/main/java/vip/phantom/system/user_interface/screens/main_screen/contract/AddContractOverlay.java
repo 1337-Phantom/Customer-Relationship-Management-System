@@ -11,7 +11,7 @@ import vip.phantom.system.contract.ContractManager;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.NormalButton;
 import vip.phantom.system.user_interface.interactive_areas.text.TextField;
-import vip.phantom.system.user_interface.screens.main_screen.Overlay;
+import vip.phantom.system.user_interface.screens.Overlay;
 
 import java.awt.*;
 import java.time.LocalDate;
@@ -57,7 +57,7 @@ public class AddContractOverlay extends Overlay {
     @Override
     public void drawScreen(int mouseX, int mouseY) {
         drawDefaultBackground();
-        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), Color.green);
+        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), new Color(80, 80, 80));
         float renderY = informationArea.getY();
         RenderUtil.beginScissor(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight());
         headlineFr.drawString("§nNeuer Vertrag", informationArea.getX(), renderY, Color.black);
@@ -137,7 +137,7 @@ public class AddContractOverlay extends Overlay {
                     } else {
                         localDate = Methods.getDateFromString(time);
                     }
-                    final Contract newContract = new Contract(entryFields.get("§c*§rTitel").getText(), ContactManager.INSTANCE.getContactList().isEmpty() ? new Contact("Unknown") : ContactManager.INSTANCE.getContactList().get(0), localDate);
+                    final Contract newContract = new Contract(entryFields.get("§c*§rTitel").getText(), entryFields.get("§c*§rKunde").getText(), localDate);
                     if (!entryFields.get("Preis").getText().equals("")) {
                         newContract.setPrice(Float.parseFloat(entryFields.get("Preis").getText()));
                     }

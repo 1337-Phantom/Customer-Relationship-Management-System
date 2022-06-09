@@ -1,4 +1,4 @@
-package vip.phantom.system.user_interface.screens.main_screen;
+package vip.phantom.system.user_interface.screens;
 
 import org.lwjgl.input.Keyboard;
 import vip.phantom.api.font.FontRenderer;
@@ -36,7 +36,7 @@ public class Overlay {
     }
 
     public void drawDefaultBackground() {
-        RenderUtil.drawRect(0, 0, width, height, new Color(15, 15, 15, 180));
+        RenderUtil.drawRect(0, 0, width, height, new Color(150, 150, 150, 100));
     }
 
     public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {

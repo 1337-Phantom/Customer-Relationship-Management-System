@@ -1,15 +1,15 @@
 package vip.phantom.system.user_interface.screens.main_screen.contact;
 
 import vip.phantom.api.utils.RenderUtil;
+import vip.phantom.system.contact.Contact;
 import vip.phantom.system.contact.ContactManager;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.round_buttons.RoundPictureButton;
+import vip.phantom.system.user_interface.interactive_areas.comboboxes.ComboBox;
 import vip.phantom.system.user_interface.screens.main_screen.MainScreen;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.*;
 import java.util.List;
 
 public class ContactsScreen extends MainScreen {
@@ -24,30 +24,43 @@ public class ContactsScreen extends MainScreen {
 
     private LinkedHashMap<String, List<String>> table = new LinkedHashMap<>();
 
+    private ComboBox sortBox;
+
     @Override
     public void initScreen() {
         super.initScreen();
         areaByIndex.clear();
+        if (sortBox == null) {
+            sortBox = new ComboBox(0, 0, "Letzte", "Name", "Alter");
+        }
+        sortBox.setX(mainWindow.getX() + 5 + fr.getWidth("Sorted After: ") + 5);
+        sortBox.setY(mainWindow.getY() + headlineFr.getHeight() + spacerSize);
+        List<Contact> contactList = ContactManager.INSTANCE.getContactList();
+        switch (sortBox.getCurrentValue()) {
+            case "Letzte" -> contactList.sort(Comparator.comparing(Contact::getLastLookedAt).reversed());
+            case "Name" -> contactList.sort(Comparator.comparing(Contact::getFamilyName));
+            case "Alter" -> contactList.sort(Comparator.comparing(Contact::getAge));
+        }
         List<String> nameList = new ArrayList<>();
-        ContactManager.INSTANCE.getContactList().forEach(contact -> nameList.add(contact.getFullName()));
+        contactList.forEach(contact -> nameList.add(contact.getFullName()));
         table.put("Name", nameList);
         List<String> mailList = new ArrayList<>();
-        ContactManager.INSTANCE.getContactList().forEach(contact -> mailList.add(contact.getEMail()));
+        contactList.forEach(contact -> mailList.add(contact.getEMail()));
         table.put("E-Mail", mailList);
         List<String> phoneList = new ArrayList<>();
-        ContactManager.INSTANCE.getContactList().forEach(contact -> phoneList.add(contact.getPhoneNumber()));
+        contactList.forEach(contact -> phoneList.add(contact.getPhoneNumber()));
         table.put("Telefon", phoneList);
         List<String> ageList = new ArrayList<>();
-        ContactManager.INSTANCE.getContactList().forEach(contact -> ageList.add(contact.getAge()));
+        contactList.forEach(contact -> ageList.add(contact.getAge()));
         table.put("Alter", ageList);
         List<String> cityList = new ArrayList<>();
-        ContactManager.INSTANCE.getContactList().forEach(contact -> cityList.add(contact.getCity() + " (" + contact.getCountry() + ")"));
+        contactList.forEach(contact -> cityList.add(contact.getCity() + " (" + contact.getCountry() + ")"));
         table.put("Wohnort", cityList);
         List<String> addressList = new ArrayList<>();
-        ContactManager.INSTANCE.getContactList().forEach(contact -> addressList.add(contact.getStreetAndNumber()));
+        contactList.forEach(contact -> addressList.add(contact.getStreetAndNumber()));
         table.put("Adresse", addressList);
 
-        addContactButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", Color.black);
+        addContactButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", new Color(97, 202, 192));
     }
 
     @Override
@@ -56,6 +69,9 @@ public class ContactsScreen extends MainScreen {
 //        RenderUtil.drawRect(mainWindow.getX(), renderY, mainWindow.getWidth(), mainWindow.getHeight() - (renderY - mainWindow.getY()), Color.blue);
 
         renderY += spacerSize;
+        fr.drawString("Sortiert nach: ", mainWindow.getX() + 5, renderY - 3, Color.white);
+        sortBox.drawComboBox(mouseX, mouseY);
+        renderY += sortBox.getHeight();
         Object[] keyArray = table.keySet().toArray();
         float[] columnSizes = new float[]{mainWindow.getX(), 0, spacerSize, 0};
         for (int i = 0; i < keyArray.length; i++) {
@@ -63,9 +79,9 @@ public class ContactsScreen extends MainScreen {
             List<String> entries = table.get(headline);
             columnSizes = drawStringColumnAt(mouseX, mouseY, columnSizes[0] + columnSizes[2], renderY, headline, entries);
             if (i == 0) {
-                RenderUtil.drawRect(columnSizes[0], columnSizes[1], 1, columnSizes[3], Color.black);
+                RenderUtil.drawRect(columnSizes[0], columnSizes[1], 1, columnSizes[3], Color.white);
             }
-            RenderUtil.drawRect(columnSizes[0] + columnSizes[2] - 1, columnSizes[1], 1, columnSizes[3], Color.black);
+            RenderUtil.drawRect(columnSizes[0] + columnSizes[2] - 1, columnSizes[1], 1, columnSizes[3], Color.white);
         }
 
         addContactButton.drawScreen(mouseX, mouseY);
@@ -84,10 +100,10 @@ public class ContactsScreen extends MainScreen {
         }
         columnWidth += 20;
         /* rendering the Column */
-        RenderUtil.drawRect(x, y, columnWidth, 1, Color.black);
-        fr.drawString(columnName, x + columnWidth / 2f - fr.getWidth(columnName) / 2f, y, Color.black);
+        RenderUtil.drawRect(x, y, columnWidth, 1, Color.white);
+        fr.drawString(columnName, x + columnWidth / 2f - fr.getWidth(columnName) / 2f, y, Color.white);
         y += fr.getHeight();
-        RenderUtil.drawRect(x, y - 2, columnWidth, 1, Color.black);
+        RenderUtil.drawRect(x, y - 2, columnWidth, 1, Color.white);
         for (int i = 0; i < valueList.size(); i++) {
             String str = valueList.get(i);
             final Area area = new Area(mainWindow.getX(), y - spacerSize / 2f, mainWindow.getWidth(), fr.getHeight() + spacerSize);
@@ -97,10 +113,10 @@ public class ContactsScreen extends MainScreen {
             if (area.isHovered(mouseX, mouseY) && activeOverlay == null) {
                 RenderUtil.drawRect(x, y - spacerSize / 2f, columnWidth, fr.getHeight() + spacerSize, Color.gray);
             }
-            fr.drawString(str, x + columnWidth / 2f - fr.getWidth(str) / 2f - 1, y + spacerSize / 2f, Color.black);
+            fr.drawString(str, x + columnWidth / 2f - fr.getWidth(str) / 2f - 1, y + spacerSize / 2f, Color.white);
             y += fr.getHeight() + spacerSize;
         }
-        RenderUtil.drawRect(x, y - 1, columnWidth, 1, Color.black);
+        RenderUtil.drawRect(x, y - 1, columnWidth, 1, Color.white);
         return new float[]{x, originalY, columnWidth, y - originalY};
     }
 
@@ -109,6 +125,9 @@ public class ContactsScreen extends MainScreen {
         if (!super.mouseClicked(mouseX, mouseY, mouseButton) && activeOverlay == null) {
             if (addContactButton.mouseClicked(mouseX, mouseY, mouseButton)) {
                 showOverlay(new AddContactOverlay());
+                return true;
+            } else if (sortBox.mouseClicked(mouseX, mouseY, mouseButton)) {
+                initScreen();
                 return true;
             } else {
                 for (Integer integer : areaByIndex.keySet()) {

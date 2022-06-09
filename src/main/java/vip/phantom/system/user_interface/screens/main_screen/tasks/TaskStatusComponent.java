@@ -29,7 +29,7 @@ public class TaskStatusComponent {
         this.width = width;
         this.status = status;
 
-        float renderY = y + fr.getHeight();
+        float renderY = y + fr.getHeight() + 1;
         for (Task task : TaskManager.INSTANCE.getTasksWithStatus(status)) {
             TaskComponent newComp = new TaskComponent(x, renderY, width, 50, task);
             tasks.add(newComp);
@@ -40,8 +40,9 @@ public class TaskStatusComponent {
     }
 
     public void drawScreen(int mouseX, int mouseY) {
-        RenderUtil.drawRect(x, y, width, fr.getHeight(), Color.gray);
-        fr.drawString(status.string, x + 10, y, Color.black);
+        RenderUtil.drawRect(x, y, width, fr.getHeight(), new Color(100, 100, 100));
+        RenderUtil.drawOutline(x + 1, y, width - 1, fr.getHeight(), 1, Color.black);
+        fr.drawString(status.string + "(" + tasks.size() + ")", x + 10, y, Color.white);
 
         for (TaskComponent task : tasks) {
             task.drawScreen(mouseX, mouseY);

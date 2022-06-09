@@ -42,10 +42,10 @@ public class ComboBox extends Area {
         RenderUtil.drawOutline(x, y, width, height, 1, Color.black);
         fr.drawString(currentValue, x, y, Color.black);
         if (extended) {
-            RenderUtil.drawRect(x, y + height, width, extendedHeight, Color.gray.brighter());
+            RenderUtil.drawRect(x, y + height, width, extendedHeight, new Color(100, 100, 100));
             RenderUtil.drawOutline(x, y + height, width, extendedHeight, 1, Color.black);
             for (int i = 0; i < values.length; i++) {
-                fr.drawString(values[i], x, y + height + i * fr.getHeight(), isModeHovered(mouseX, mouseY, i) ? Color.blue : currentValue.equals(values[i]) ? Color.red : Color.black);
+                fr.drawString(values[i], x, y + height + i * fr.getHeight(), isModeHovered(mouseX, mouseY, i) ? new Color(97, 202, 192) : currentValue.equals(values[i]) ? Color.white : Color.black);
             }
         }
     }

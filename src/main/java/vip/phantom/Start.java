@@ -45,7 +45,7 @@ public class Start {
 
         CRM crmSystem = CRM.getCrm();
         crmSystem.startup();
-        Runtime.getRuntime().addShutdownHook(new Thread(crmSystem::shutdownHook));
+        Runtime.getRuntime().addShutdownHook(new Thread(crmSystem::shutdown));
 
         crmSystem.displayScreen(new LoginScreen());
 

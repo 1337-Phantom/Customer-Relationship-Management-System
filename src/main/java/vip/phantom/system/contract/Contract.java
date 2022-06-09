@@ -1,5 +1,6 @@
 package vip.phantom.system.contract;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import vip.phantom.system.contact.Contact;
@@ -8,13 +9,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 
+@AllArgsConstructor
 public class Contract {
     @Setter
     private int contractNumber;
     @Getter
     private String headline;
     @Getter
-    private Contact customer;
+    private String customer;
     private ContractStatus status;
 
     @Getter @Setter
@@ -27,11 +29,11 @@ public class Contract {
     @Setter @Getter
     private float price;
 
-    public Contract(String headline, Contact customer, int timeForContractInMonth) {
+    public Contract(String headline, String customer, int timeForContractInMonth) {
         this(headline, customer, LocalDate.now().plusMonths(timeForContractInMonth));
     }
 
-    public Contract(String headline, Contact customer, LocalDate deliveryDate) {
+    public Contract(String headline, String customer, LocalDate deliveryDate) {
         this.headline = headline;
         this.customer = customer;
         this.status = ContractStatus.APPROVAL;

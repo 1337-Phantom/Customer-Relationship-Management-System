@@ -23,7 +23,7 @@ public class Button extends Area {
 
     protected boolean hovered = false, pressed = false;
 
-    protected Color normalColor = Color.red, hoveredColor = Color.green;
+    protected Color normalColor = new Color(33, 33, 33), hoveredColor = new Color(137, 137, 137);
 
     public Button(int id, int x, int y, int width, int height, String text) {
         super(x, y, width, height);

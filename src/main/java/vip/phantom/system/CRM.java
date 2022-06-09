@@ -9,10 +9,9 @@ import lombok.Getter;
 import org.lwjgl.opengl.Display;
 import vip.phantom.api.file.FileManager;
 import vip.phantom.api.font.Fonts;
-import vip.phantom.system.contact.ContactManager;
-import vip.phantom.system.contract.ContractManager;
-import vip.phantom.system.task.TaskManager;
 import vip.phantom.system.user_interface.screens.Screen;
+
+import java.io.File;
 
 public class CRM {
 
@@ -26,22 +25,8 @@ public class CRM {
 
     public int width, height, lastWidth, lastHeight;
 
-    @Getter
-    private int debugFps;
-    private int fpsCounter;
-    private long fpsUpdateTime = 0;
-
     public void startup() {
         Fonts.getINSTANCE();
-        currentAccount = new Account("heilmann.yorck", "Yorck Heilmann", Role.ADMIN);
-        Organisation orga = new Organisation("Standard");
-        currentAccount.addOrganisation(orga, Role.ADMIN);
-//        selectedOrganisation = orga;
-//        currentAccount.addOrganisation(new Organisation("Mojang"), Role.ADMIN);
-//        currentAccount.addOrganisation(new Organisation("Phantom.vip"), Role.ADMIN);
-//        currentAccount.addOrganisation(new Organisation("Uni"), Role.ADMIN);
-
-        FileManager.INSTANCE.loadAllFiles();
     }
 
     public void setSelectedOrganisation(Organisation organisation) {
@@ -51,16 +36,29 @@ public class CRM {
         }
     }
 
+    public boolean login(Account account, boolean force) {
+        boolean doesAccountExist = force;
+        for (File file : FileManager.INSTANCE.getRootDirectory().listFiles()) {
+            if (file.getName().equals(account.getAccountName())) {
+                doesAccountExist = true;
+            }
+        }
+        if (doesAccountExist) {
+            currentAccount = account;
+            Organisation orga = new Organisation("Standard");
+            currentAccount.addOrganisation(orga, Role.ADMIN);
+            selectedOrganisation = orga;
+
+            FileManager.INSTANCE.addFile(CRM.getCrm().currentAccount);
+            FileManager.INSTANCE.loadAllFiles();
+            crm.displayScreen(Category.HOME.getCategoryScreen());
+        }
+        return doesAccountExist;
+    }
+
     public void drawScreen(int mouseX, int mouseY) {
         width = Display.getWidth();
         height = Display.getHeight();
-        fpsCounter += 1;
-        while (System.currentTimeMillis() >= fpsUpdateTime + 1000) {
-            debugFps = fpsCounter;
-            fpsCounter = 0;
-            fpsUpdateTime = System.currentTimeMillis();
-            Display.setTitle("Customer Relationship System | Yorck Heilmann | FPS: " + getDebugFps());
-        }
 
         if (currentScreen != null) {
             if (lastWidth != width || lastHeight != height) {
@@ -105,7 +103,7 @@ public class CRM {
         }
     }
 
-    public void shutdownHook() {
+    public void shutdown() {
         FileManager.INSTANCE.saveAllFiles();
     }
 

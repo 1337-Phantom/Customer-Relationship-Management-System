@@ -5,16 +5,13 @@ import vip.phantom.api.font.Fonts;
 import vip.phantom.api.utils.Methods;
 import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.Account;
-import vip.phantom.system.contact.Contact;
-import vip.phantom.system.contact.ContactManager;
-import vip.phantom.system.contact.Title;
 import vip.phantom.system.task.Task;
 import vip.phantom.system.task.TaskManager;
 import vip.phantom.system.task.TaskStatus;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.NormalButton;
 import vip.phantom.system.user_interface.interactive_areas.text.TextField;
-import vip.phantom.system.user_interface.screens.main_screen.Overlay;
+import vip.phantom.system.user_interface.screens.Overlay;
 
 import java.awt.*;
 import java.time.LocalDate;
@@ -57,7 +54,7 @@ public class AddTaskOverlay extends Overlay {
     @Override
     public void drawScreen(int mouseX, int mouseY) {
         drawDefaultBackground();
-        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), Color.green);
+        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), new Color(100, 100, 100));
         float renderY = informationArea.getY();
         RenderUtil.beginScissor(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight());
         headlineFr.drawString("§nNeue Aufgabe", informationArea.getX(), renderY, Color.black);

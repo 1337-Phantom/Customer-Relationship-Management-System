@@ -3,7 +3,6 @@ package vip.phantom.api.file;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.Getter;
-import vip.phantom.system.CRM;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,7 +21,6 @@ public class FileManager {
 
     public FileManager() {
         rootDirectory = new File(System.getenv("APPDATA"), "CustomerRelationshipManagement");
-        System.out.println(rootDirectory.getAbsolutePath());
         if (!rootDirectory.exists()) {
             if (rootDirectory.mkdirs()) {
                 System.out.println("Created directory.");
@@ -30,8 +28,6 @@ public class FileManager {
                 System.err.println("Couldn't create the directory. Please try again.");
             }
         }
-
-        addFile(CRM.getCrm().currentAccount);
     }
 
     public void addFile(Savable savable) {
@@ -39,7 +35,6 @@ public class FileManager {
     }
 
     public void loadAllFiles() {
-        System.out.println("Loading all files.");
         for (Savable savable : fileList) {
             try {
                 savable.loadFile();

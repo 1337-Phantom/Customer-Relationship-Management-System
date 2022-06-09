@@ -15,7 +15,7 @@ public class CategoryButton extends RoundPictureButton {
     private long hoveredSince;
 
     public CategoryButton(int id, int x, int y, int size, String pictureName, Category category) {
-        super(id, x, y, size, pictureName);
+        super(id, x, y, size, pictureName, new Color(97, 202, 192));
         this.category = category;
     }
 
@@ -26,8 +26,8 @@ public class CategoryButton extends RoundPictureButton {
             hoveredSince = System.currentTimeMillis();
         }
         if (System.currentTimeMillis() - hoveredSince > 1000) {
-            RenderUtil.drawRect(mouseX, mouseY, fr.getWidth(category.getString()), fr.getHeight(), Color.gray);
-            fr.drawString(category.getString(), mouseX, mouseY, Color.black);
+            RenderUtil.drawRect(mouseX, mouseY - fr.getHeight(), fr.getWidth(category.getString()) + 3, fr.getHeight(), Color.gray);
+            fr.drawString(category.getString(), mouseX, mouseY - fr.getHeight(), Color.black);
         }
     }
 }

@@ -27,12 +27,12 @@ public class TaskComponent {
     }
 
     public void drawScreen(int mouseX, int mouseY) {
-        RenderUtil.drawRect(x, y, width, height, isHovered(mouseX, mouseY) ? Color.red : Color.green);
-        headlineFr.drawString("§n" + task.headline, x + 5, y + 2, Color.black);
-        fr.drawString(task.description, x + 5, y + 2 + headlineFr.getHeight(), Color.black);
+        RenderUtil.drawRect(x, y, width, height, isHovered(mouseX, mouseY) ? Color.gray : new Color(70, 70, 70));
+        headlineFr.drawString("§n" + task.headline, x + 5, y + 2, Color.white);
+        fr.drawString(task.description, x + 5, y + 2 + headlineFr.getHeight(), Color.white);
 
-        fr.drawString(task.getFinishDate(), x + width - fr.getWidth(task.getFinishDate()) - 5, y + 2, Color.black);
-        fr.drawString(task.getDaysLeft() + "d", x + width - fr.getWidth(task.getDaysLeft() + "d") - 5, y - 5 + fr.getHeight(), Color.black);
+        fr.drawString(task.getFinishDate(), x + width - fr.getWidth(task.getFinishDate()) - 5, y + 2, Color.white);
+        fr.drawString("~" + task.getDaysLeft() + "d", x + width - fr.getWidth("~" + task.getDaysLeft() + "d") - 5, y - 5 + fr.getHeight(), Color.white);
     }
 
     public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {

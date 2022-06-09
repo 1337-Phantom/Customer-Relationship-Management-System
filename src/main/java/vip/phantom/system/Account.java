@@ -1,13 +1,16 @@
 package vip.phantom.system;
 
 import com.google.gson.JsonObject;
+import lombok.CustomLog;
 import lombok.Getter;
 import vip.phantom.api.file.Savable;
 import vip.phantom.api.utils.Methods;
 import vip.phantom.system.contact.Contact;
 import vip.phantom.system.contact.Title;
 import vip.phantom.system.contract.Contract;
+import vip.phantom.system.contract.ContractStatus;
 import vip.phantom.system.task.Task;
+import vip.phantom.system.task.TaskStatus;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,28 +21,32 @@ import java.util.List;
 
 public class Account extends Savable {
 
+    @Getter
     private final String accountName;
 
     @Getter
-    private final String name;
-    @Getter
-    private final Role applicationRole;
-
-    private long createdAt;
+    private String name;
 
     @Getter
     private final List<Organisation> organisations = new ArrayList<>();
     private final HashMap<Organisation, Role> organisationRole = new HashMap<>();
 
-    public Account(String accountName, String username, Role applicationRole) {
+    public Account(String accountName) {
         this.accountName = accountName;
-        this.name = username;
-        this.applicationRole = applicationRole;
+    }
+
+    public Account(String accountName, String name) {
+        this.accountName = accountName;
+        this.name = name;
     }
 
     public void addOrganisation(Organisation organisation, Role role) {
         organisations.add(organisation);
         organisationRole.put(organisation, role);
+    }
+
+    public void deleteOrganisation(Organisation organisation) {
+        organisations.remove(organisation);
     }
 
     public Role getOrganisationRole(Organisation organisation) {
@@ -50,6 +57,9 @@ public class Account extends Savable {
     public boolean loadFile() throws IOException {
         JsonObject jsonObject = readFile();
         if (jsonObject != null) {
+            if (jsonObject.has("Name")) {
+                name = jsonObject.get("Name").getAsString();
+            }
             if (jsonObject.has("Count")) {
                 if (jsonObject.get("Count").getAsInt() != 0) {
                     organisations.clear();
@@ -88,20 +98,54 @@ public class Account extends Savable {
                         }
 
                         if (organisationJsonObject.has("Contracts")) {
+                            List<Contract> contracts = new ArrayList<>();
                             JsonObject contractsJsonObject = organisationJsonObject.getAsJsonObject("Contracts");
                             if (contractsJsonObject.has("Count")) {
                                 for (int j = 0; j < contractsJsonObject.get("Count").getAsInt(); j++) {
+                                    JsonObject contractJO = contractsJsonObject.getAsJsonObject("Contract#" + j);
 
+                                    int number = contractJO.get("Number").getAsInt();
+                                    String headline = contractJO.get("Headline").getAsString();
+                                    String customer = contractJO.get("Customer").getAsString();
+                                    ContractStatus status = ContractStatus.getStatusFromString(contractJO.get("Status").getAsString());
+                                    LocalDate startDate = Methods.getDateFromString(contractJO.get("StartDate").getAsString());
+                                    LocalDate deliveryDate = Methods.getDateFromString(contractJO.get("DeliveryDate").getAsString());
+                                    String description = contractJO.get("Description").getAsString();
+                                    float price = contractJO.get("Price").getAsFloat();
+
+                                    contracts.add(new Contract(number, headline, customer, status, startDate, deliveryDate, description, price));
                                 }
                             }
+                            organisation.setContracts(contracts);
                         }
                         if (organisationJsonObject.has("Tasks")) {
+                            List<Task> tasks = new ArrayList<>();
                             JsonObject tasksJsonObject = organisationJsonObject.getAsJsonObject("Tasks");
                             if (tasksJsonObject.has("Count")) {
                                 for (int j = 0; j < tasksJsonObject.get("Count").getAsInt(); j++) {
+                                    JsonObject taskJO = tasksJsonObject.getAsJsonObject("Task#" + j);
 
+                                    String headline = taskJO.get("Headline").getAsString();
+                                    //todo
+                                    Account creator = new Account(taskJO.get("Creator").getAsString());
+                                    LocalDate entryDate = Methods.getDateFromString(taskJO.get("EntryDate").getAsString());
+
+                                    List<Contact> participants = new ArrayList<>();
+                                    JsonObject participantsJO = taskJO.getAsJsonObject("Participants");
+                                    if (participantsJO.has("Count")) {
+                                        for (int j1 = 0; j1 < participantsJO.get("Count").getAsInt(); j1++) {
+                                            //todo
+                                            participants.add(new Contact("Test"));
+                                        }
+                                    }
+                                    LocalDate latestDate = Methods.getDateFromString(taskJO.get("LatestDate").getAsString());
+                                    TaskStatus status = TaskStatus.getTitleFromString(taskJO.get("Status").getAsString());
+                                    String description = taskJO.get("Description").getAsString();
+
+                                    tasks.add(new Task(headline, creator, entryDate, latestDate, status, description));
                                 }
                             }
+                            organisation.setTasks(tasks);
                         }
                         CRM.getCrm().currentAccount.addOrganisation(organisation, Role.ADMIN);
                         if (i == 0) {
@@ -117,6 +161,7 @@ public class Account extends Savable {
     @Override
     public boolean saveFile() {
         JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("Name", name);
         jsonObject.addProperty("Count", organisations.size());
         for (int i = 0; i < organisations.size(); i++) {
             Organisation organisation = organisations.get(i);
@@ -159,7 +204,7 @@ public class Account extends Savable {
                     contractJsonObject.addProperty("Number", contract.getContractNumber());
 
                     contractJsonObject.addProperty("Headline", contract.getHeadline());
-                    contractJsonObject.addProperty("Customer", contract.getCustomer().getAccountName());
+                    contractJsonObject.addProperty("Customer", contract.getCustomer());
                     contractJsonObject.addProperty("Status", contract.getStatusAsString());
                     contractJsonObject.addProperty("StartDate", contract.getStartDateAsString());
                     contractJsonObject.addProperty("DeliveryDate", contract.getDeliveryDateAsString());

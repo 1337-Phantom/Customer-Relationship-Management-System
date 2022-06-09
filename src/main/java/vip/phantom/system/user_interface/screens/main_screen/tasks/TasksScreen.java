@@ -26,7 +26,7 @@ public class TasksScreen extends MainScreen {
     public void initScreen() {
         super.initScreen();
         lastTaskNumber = 0;
-        addContractButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", Color.black);
+        addContractButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", new Color(97, 202, 192));
     }
 
     @Override

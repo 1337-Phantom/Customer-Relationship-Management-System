@@ -3,10 +3,12 @@ package vip.phantom.system.user_interface.screens.main_screen.tasks;
 import vip.phantom.api.utils.RenderUtil;
 import vip.phantom.system.Account;
 import vip.phantom.system.task.Task;
+import vip.phantom.system.task.TaskStatus;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.EditButton;
+import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.NormalButton;
 import vip.phantom.system.user_interface.interactive_areas.text.TextField;
-import vip.phantom.system.user_interface.screens.main_screen.Overlay;
+import vip.phantom.system.user_interface.screens.Overlay;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
@@ -39,19 +41,21 @@ public class TaskOverlay extends Overlay {
         data.put("Teilnehmer", participants.toString());
         data.put("Bis", shownTask.getFinishDate() + "(" + shownTask.getDaysLeft() + " Tage)");
 
-        for (int i = 0; i < 5; i++) {
-            buttonList.add(new EditButton(i, 0, 0, (int) fr.getHeight(), (int) fr.getHeight(), Color.black));
-        }
+//        for (int i = 0; i < 5; i++) {
+        buttonList.add(new EditButton(0, 0, 0, (int) fr.getHeight(), (int) fr.getHeight(), Color.white));
+//        }
         editingField = new TextField(0, 0, 200, "", fr);
         editingField.setShown(false);
+
+        buttonList.add(new NormalButton(1, (int) informationArea.getX() + 5, (int) (informationArea.getY() + informationArea.getHeight() - 30), (int) (informationArea.getWidth() - 10), 25, "Nächste Stufe"));
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY) {
         drawDefaultBackground();
-        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), Color.green);
+        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), new Color(70, 70, 70));
         float renderY = informationArea.getY();
-        headlineFr.drawString("§n" + shownTask.getHeadline(), informationArea.getX(), renderY, Color.black);
+        headlineFr.drawString("§n" + shownTask.getHeadline(), informationArea.getX(), renderY, Color.white);
         renderY += headlineFr.getHeight();
         editingField.setY(renderY + fr.getHeight() * fieldEditing);
 
@@ -59,17 +63,19 @@ public class TaskOverlay extends Overlay {
         for (String s : data.keySet()) {
             String content = data.get(s);
             float renderX = informationArea.getX();
-            fr.drawString(s + ": ", renderX, renderY, Color.black);
+            fr.drawString(s + ": ", renderX, renderY, Color.white);
             renderX += fr.getWidth(s + ": ") + 5;
             if (editingField.isShown() && fieldEditing == i) {
                 editingField.setPosition(renderX, renderY);
                 renderX += editingField.getWidth() + 5;
             } else {
-                fr.drawString(content, renderX, renderY, Color.black);
+                fr.drawString(content, renderX, renderY, Color.white);
                 renderX += fr.getWidth(content) + 5;
             }
-            buttonList.get(i).setX(renderX);
-            buttonList.get(i).setY(renderY - 3);
+            if (i == 0) {
+                buttonList.get(i).setX(renderX);
+                buttonList.get(i).setY(renderY - 3);
+            }
             renderY += fr.getHeight();
             i++;
         }
@@ -83,6 +89,10 @@ public class TaskOverlay extends Overlay {
 //            crm.currentScreen.closeOverlay();
 //        }
         if (!super.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (!informationArea.isHovered(mouseX, mouseY)) {
+                crm.currentScreen.closeOverlay();
+                return true;
+            }
             return editingField.mouseClicked(mouseX, mouseY, mouseButton);
         }
         return false;
@@ -102,7 +112,20 @@ public class TaskOverlay extends Overlay {
 
     @Override
     public void buttonPressed(int buttonId) {
-
+        if (buttonId == 1) {
+            TaskStatus newStatus = shownTask.getStatus();
+            boolean wasLast = false;
+            for (TaskStatus value : TaskStatus.values()) {
+                if (newStatus == value) {
+                    wasLast = true;
+                } else if (wasLast) {
+                    newStatus = value;
+                    break;
+                }
+            }
+            shownTask.setStatus(newStatus);
+            initOverlay();
+        }
         super.buttonPressed(buttonId);
     }
 }

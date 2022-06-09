@@ -1,7 +1,6 @@
 package vip.phantom.system.user_interface.screens.main_screen.contact;
 
 import org.lwjgl.input.Keyboard;
-import org.w3c.dom.Text;
 import vip.phantom.api.font.Fonts;
 import vip.phantom.api.utils.Methods;
 import vip.phantom.api.utils.RenderUtil;
@@ -12,7 +11,7 @@ import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.NormalButton;
 import vip.phantom.system.user_interface.interactive_areas.comboboxes.ComboBox;
 import vip.phantom.system.user_interface.interactive_areas.text.TextField;
-import vip.phantom.system.user_interface.screens.main_screen.Overlay;
+import vip.phantom.system.user_interface.screens.Overlay;
 
 import java.awt.*;
 import java.time.LocalDate;
@@ -65,7 +64,7 @@ public class AddContactOverlay extends Overlay {
     @Override
     public void drawScreen(int mouseX, int mouseY) {
         drawDefaultBackground();
-        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), Color.green);
+        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), new Color(80, 80, 80));
         float renderY = informationArea.getY();
         RenderUtil.beginScissor(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight());
         headlineFr.drawString("§nNeuer Account", informationArea.getX(), renderY, Color.black);

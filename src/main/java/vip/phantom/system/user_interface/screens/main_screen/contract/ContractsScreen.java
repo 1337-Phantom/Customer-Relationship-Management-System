@@ -53,7 +53,7 @@ public class ContractsScreen extends MainScreen {
         ContractManager.INSTANCE.getContractList().forEach(contract -> deliveryDates.add(contract.getDeliveryDateAsString()));
         table.put("Vertragsende", deliveryDates);
 
-        addContractButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", Color.black);
+        addContractButton = new RoundPictureButton(buttonList.size(), width - 45, height - 45, 38, "plusIcon", new Color(97, 202, 192));
     }
 
     @Override
@@ -69,9 +69,9 @@ public class ContractsScreen extends MainScreen {
             List<String> entries = table.get(headline);
             columnSizes = drawStringColumnAt(mouseX, mouseY, columnSizes[0] + columnSizes[2], renderY, headline, entries);
             if (i == 0) {
-                RenderUtil.drawRect(columnSizes[0], columnSizes[1], 1, columnSizes[3], Color.black);
+                RenderUtil.drawRect(columnSizes[0], columnSizes[1], 1, columnSizes[3], Color.white);
             }
-            RenderUtil.drawRect(columnSizes[0] + columnSizes[2] - 1, columnSizes[1], 1, columnSizes[3], Color.black);
+            RenderUtil.drawRect(columnSizes[0] + columnSizes[2] - 1, columnSizes[1], 1, columnSizes[3], Color.white);
         }
 
         addContractButton.drawScreen(mouseX, mouseY);
@@ -90,10 +90,10 @@ public class ContractsScreen extends MainScreen {
         }
         columnWidth += 20;
         /* rendering the Column */
-        RenderUtil.drawRect(x, y, columnWidth, 1, Color.black);
-        fr.drawString(columnName, x + columnWidth / 2f - fr.getWidth(columnName) / 2f, y, Color.black);
+        RenderUtil.drawRect(x, y, columnWidth, 1, Color.white);
+        fr.drawString(columnName, x + columnWidth / 2f - fr.getWidth(columnName) / 2f, y, Color.white);
         y += fr.getHeight();
-        RenderUtil.drawRect(x, y - 2, columnWidth, 1, Color.black);
+        RenderUtil.drawRect(x, y - 2, columnWidth, 1, Color.white);
         for (int i = 0; i < valueList.size(); i++) {
             String str = valueList.get(i);
             final Area area = new Area(mainWindow.getX(), y - spacerSize / 2f, mainWindow.getWidth(), fr.getHeight() + spacerSize);
@@ -103,10 +103,10 @@ public class ContractsScreen extends MainScreen {
             if (area.isHovered(mouseX, mouseY) && activeOverlay == null) {
                 RenderUtil.drawRect(x, y - spacerSize / 2f, columnWidth, fr.getHeight() + spacerSize, Color.gray);
             }
-            fr.drawString(str, x + columnWidth / 2f - fr.getWidth(str) / 2f - 1, y + spacerSize / 2f, Color.black);
+            fr.drawString(str, x + columnWidth / 2f - fr.getWidth(str) / 2f - 1, y + spacerSize / 2f, Color.white);
             y += fr.getHeight() + spacerSize;
         }
-        RenderUtil.drawRect(x, y - 1, columnWidth, 1, Color.black);
+        RenderUtil.drawRect(x, y - 1, columnWidth, 1, Color.white);
         return new float[]{x, originalY, columnWidth, y - originalY};
     }
 

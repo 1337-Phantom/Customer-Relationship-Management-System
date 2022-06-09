@@ -13,7 +13,9 @@ import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.Category;
 import vip.phantom.system.user_interface.interactive_areas.buttons.Button;
 import vip.phantom.system.user_interface.interactive_areas.buttons.round_buttons.CategoryButton;
+import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.NormalButton;
 import vip.phantom.system.user_interface.interactive_areas.comboboxes.ComboBox;
+import vip.phantom.system.user_interface.screens.LoginScreen;
 import vip.phantom.system.user_interface.screens.Screen;
 
 import java.awt.*;
@@ -32,7 +34,7 @@ public class MainScreen extends Screen {
     protected float renderY;
 
     protected FontRenderer headlineFr = Fonts.Light12;
-    protected Color headlineColor = Color.black;
+    protected Color headlineColor = Color.white;
     protected String headline;
 
     private List<Button> navigationButtons = new ArrayList<>();
@@ -44,14 +46,20 @@ public class MainScreen extends Screen {
     @Override
     public void initScreen() {
         super.initScreen();
+        navigationButtons.clear();
         sideBar = new Area(0, 0, Math.min(width / 12, 60), height);
-        topBar = new Area(sideBar.getWidth(), 0, width - sideBar.getWidth(), fr.getHeight() + 2);
+        topBar = new Area(sideBar.getWidth(), 0, width - sideBar.getWidth(), fr.getHeight() + 10);
         String[] organisations = new String[crm.currentAccount.getOrganisations().size()];
         for (int i = 0; i < crm.currentAccount.getOrganisations().size(); i++) {
             organisations[i] = crm.currentAccount.getOrganisations().get(i).getName();
         }
-        organisationBox = new ComboBox(topBar.getX() + fr.getWidth("Organisation:") + 5, topBar.getY(), organisations);
+        organisationBox = new ComboBox(topBar.getX() + fr.getWidth("Organisation:") + 5, topBar.getY() + topBar.getHeight() / 2f - fr.getHeight() / 2f, organisations);
         organisationBox.setCurrentValue(crm.selectedOrganisation.getName());
+        float stringWidth = fr.getWidth("Neue Organisation") + 60;
+        navigationButtons.add(new NormalButton(1337, (int) (organisationBox.getX() + organisationBox.getWidth() + 10), (int) (topBar.getY() + 2), (int) stringWidth, (int) topBar.getHeight() - 4, "Neue Organisation"));
+        navigationButtons.add(new NormalButton(1339, (int) (organisationBox.getX() + organisationBox.getWidth() + 10 + navigationButtons.get(0).getWidth() + 5), (int) (topBar.getY() + 2), (int) fr.getWidth("Löschen") + 30, (int) topBar.getHeight() - 4, "Löschen"));
+        float logoutWidth = fr.getWidth("Logout") + 20;
+        navigationButtons.add(new NormalButton(1338, (int) (topBar.getX() + topBar.getWidth() - logoutWidth - 2), (int) (topBar.getY() + 2), (int) logoutWidth, (int) topBar.getHeight() - 4, "Logout"));
 
         mainWindow = new Area(sideBar.getWidth(), topBar.getHeight(), width - sideBar.getWidth(), height - topBar.getHeight());
 
@@ -63,6 +71,7 @@ public class MainScreen extends Screen {
             navigationButtons.add(categoryButton);
             yOffset += categoryButton.getHeight() + spacerSize;
         }
+
     }
 
     @Override
@@ -72,11 +81,20 @@ public class MainScreen extends Screen {
         super.drawScreen(mouseX, mouseY);
         drawNavigationBar(mouseX, mouseY);
         navigationButtons.forEach(button -> button.drawScreen(mouseX, mouseY));
+
+
     }
 
     public void drawMainArea(int mouseX, int mouseY) {
         renderY = mainWindow.getY() + spacerSize;
         super.drawScreen(mouseX, mouseY);
+    }
+
+    public void drawNavigationBar(int mouseX, int mouseY) {
+        RenderUtil.drawRoundedRect(sideBar.getX(), sideBar.getY(), sideBar.getWidth(), sideBar.getHeight(), 5, new Color(100, 100, 100), false, true, false, false);
+        RenderUtil.drawRoundedRect(topBar.getX(), topBar.getY(), topBar.getWidth(), topBar.getHeight(), 5, new Color(100, 100, 100), false, true, false, false);
+        fr.drawString("Organisation:", topBar.getX(), topBar.getY() + topBar.getHeight() / 2f - fr.getHeight() / 2f, Color.white);
+        organisationBox.drawComboBox(mouseX, mouseY);
     }
 
     @Override
@@ -86,6 +104,18 @@ public class MainScreen extends Screen {
                 if (navigationButton.mouseClicked(mouseX, mouseY, mouseButton)) {
                     if (navigationButton instanceof CategoryButton categoryButton) {
                         crm.displayScreen(categoryButton.getCategory().getCategoryScreen());
+                    } else if (navigationButton.buttonId == 1337) {
+                        showOverlay(new AddOrganisationOverlay());
+                    } else if (navigationButton.buttonId == 1338) {
+                        crm.currentAccount = null;
+                        crm.displayScreen(new LoginScreen());
+                    } else if (navigationButton.buttonId == 1339) {
+                        if (crm.currentAccount.getOrganisations().size() > 1) {
+                            int tmp = crm.currentAccount.getOrganisations().indexOf(crm.selectedOrganisation);
+                            crm.currentAccount.deleteOrganisation(crm.selectedOrganisation);
+                            crm.selectedOrganisation = crm.currentAccount.getOrganisations().get(tmp > crm.currentAccount.getOrganisations().size() - 1 ? 0 : tmp);
+                            initScreen();
+                        }
                     }
                     return true;
                 }
@@ -116,12 +146,5 @@ public class MainScreen extends Screen {
     public void drawHeadline(int mouseX, int mouseY) {
         headlineFr.drawString("§n" + headline, spacerSize + mainWindow.getX(), renderY, headlineColor);
         renderY += headlineFr.getHeight() + spacerSize;
-    }
-
-    public void drawNavigationBar(int mouseX, int mouseY) {
-        RenderUtil.drawRoundedRect(sideBar.getX(), sideBar.getY(), sideBar.getWidth(), sideBar.getHeight(), 5, Color.white.darker(), false, true, false, false);
-        RenderUtil.drawRoundedRect(topBar.getX(), topBar.getY(), topBar.getWidth(), topBar.getHeight(), 5, Color.white.darker(), false, true, false, false);
-        fr.drawString("Organisation:", topBar.getX(), topBar.getY(), Color.black);
-        organisationBox.drawComboBox(mouseX, mouseY);
     }
 }

@@ -5,7 +5,7 @@ import vip.phantom.system.contact.Contact;
 import vip.phantom.system.user_interface.Area;
 import vip.phantom.system.user_interface.interactive_areas.buttons.square_buttons.EditButton;
 import vip.phantom.system.user_interface.interactive_areas.text.TextField;
-import vip.phantom.system.user_interface.screens.main_screen.Overlay;
+import vip.phantom.system.user_interface.screens.Overlay;
 
 import java.awt.*;
 import java.util.LinkedHashMap;
@@ -43,7 +43,7 @@ public class ContactOverlay extends Overlay {
         data.put("Land", shownContact.getCountry());
 
         for (int i = 0; i < 11; i++) {
-            buttonList.add(new EditButton(i, 0, 0, (int) fr.getHeight(), (int) fr.getHeight(), Color.black));
+            buttonList.add(new EditButton(i, 0, 0, (int) fr.getHeight(), (int) fr.getHeight(), Color.white));
         }
         editingField = new TextField(0, 0, 200, "", fr);
         editingField.setShown(false);
@@ -52,9 +52,9 @@ public class ContactOverlay extends Overlay {
     @Override
     public void drawScreen(int mouseX, int mouseY) {
         drawDefaultBackground();
-        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), Color.green);
+        RenderUtil.drawRect(informationArea.getX(), informationArea.getY(), informationArea.getWidth(), informationArea.getHeight(), new Color(80, 80, 80));
         float renderY = informationArea.getY();
-        headlineFr.drawString("§n" + (shownContact.getTitle() != null ? shownContact.getTitle().getString() + " " : "") + shownContact.getFullName(), informationArea.getX(), renderY, Color.black);
+        headlineFr.drawString("§n" + (shownContact.getTitle() != null ? shownContact.getTitle().getString() + " " : "") + shownContact.getFullName(), informationArea.getX(), renderY, Color.white);
         renderY += headlineFr.getHeight();
         editingField.setY(renderY + fr.getHeight() * fieldEditing);
 
@@ -62,13 +62,13 @@ public class ContactOverlay extends Overlay {
         for (String s : data.keySet()) {
             String content = data.get(s);
             float renderX = informationArea.getX();
-            fr.drawString(s + ": ", renderX, renderY, Color.black);
+            fr.drawString(s + ": ", renderX, renderY, Color.white);
             renderX += fr.getWidth(s + ": ") + 5;
             if (editingField.isShown() && fieldEditing == i) {
                 editingField.setPosition(renderX, renderY);
                 renderX += editingField.getWidth() + 5;
             } else {
-                fr.drawString(content, renderX, renderY, Color.black);
+                fr.drawString(content, renderX, renderY, Color.white);
                 renderX += fr.getWidth(content) + 5;
             }
             buttonList.get(i).setX(renderX);
@@ -159,7 +159,7 @@ public class ContactOverlay extends Overlay {
                         data.replace("Telefonummer", shownContact.getPhoneNumber());
                     } else {
                         editingField.setText(shownContact.getPhoneNumber());
-                        editingField.setRegex("()|^(+[0-9]{1,3}|0)[0-9]{3}( ){0,1}[0-9]{7,8}");
+                        editingField.setRegex("()|^(\\+[0-9]{1,3}|0)[0-9]{3}( ){0,1}[0-9]{7,8}");
                     }
                 }
                 case 6 -> {
@@ -168,7 +168,7 @@ public class ContactOverlay extends Overlay {
                         data.replace("Handynummer", shownContact.getMobilePhoneNumber());
                     } else {
                         editingField.setText(shownContact.getMobilePhoneNumber());
-                        editingField.setRegex("()|^(+[0-9]{1,3}|0)[0-9]{3}( ){0,1}[0-9]{7,8}");
+                        editingField.setRegex("()|^(\\+[0-9]{1,3}|0)[0-9]{3}( ){0,1}[0-9]{7,8}");
                     }
                 }
                 case 7 -> {
