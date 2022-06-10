@@ -35,7 +35,7 @@ public class ContractsScreen extends MainScreen {
         ContractManager.INSTANCE.getContractList().forEach(contract -> headlineList.add(contract.getHeadline()));
         table.put("Überschrift", headlineList);
         List<String> contactList = new ArrayList<>();
-        ContractManager.INSTANCE.getContractList().forEach(contract -> contactList.add(contract.getCustomer().getFullName()));
+        ContractManager.INSTANCE.getContractList().forEach(contract -> contactList.add(contract.getCustomer()));
         table.put("Auftraggeber", contactList);
         List<String> stages = new ArrayList<>();
         ContractManager.INSTANCE.getContractList().forEach(contract -> stages.add(contract.getStatusAsString()));

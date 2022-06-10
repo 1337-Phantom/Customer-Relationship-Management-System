@@ -30,7 +30,7 @@ public class ContractOverlay extends Overlay {
         informationArea = new Area(width / 4f, height / 4f, width / 2f, height / 2f);
 
         data.put("Vertragsnummer", shownContract.getContractNumber());
-        data.put("Auftraggeber", shownContract.getCustomer().getFullName());
+        data.put("Auftraggeber", shownContract.getCustomer());
         data.put("Status", shownContract.getStatusAsString());
         data.put("Preis", shownContract.getPriceAsString());
         data.put("Vertragsbeginn", shownContract.getStartDateAsString());
