@@ -92,17 +92,19 @@ public class AddContactOverlay extends Overlay {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (!super.mouseClicked(mouseX, mouseY, mouseButton)) {
+            boolean wasClicked = false;
             for (Object value : entryFields.values()) {
                 if (value instanceof TextField textField) {
                     if (textField.mouseClicked(mouseX, mouseY, mouseButton)) {
-                        return true;
+                        wasClicked = true;
                     }
                 } else if (value instanceof ComboBox comboBox) {
                     if (comboBox.mouseClicked(mouseX, mouseY, mouseButton)) {
-                        return true;
+                        wasClicked = true;
                     }
                 }
             }
+            return wasClicked;
         }
         return false;
     }

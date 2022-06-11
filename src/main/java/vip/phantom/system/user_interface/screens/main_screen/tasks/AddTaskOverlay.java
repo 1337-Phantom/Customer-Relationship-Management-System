@@ -77,11 +77,13 @@ public class AddTaskOverlay extends Overlay {
     @Override
     public boolean mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (!super.mouseClicked(mouseX, mouseY, mouseButton)) {
+            boolean wasClicked = false;
             for (TextField value : entryFields.values()) {
                 if (value.mouseClicked(mouseX, mouseY, mouseButton)) {
-                    return true;
+                    wasClicked = true;
                 }
             }
+            return wasClicked;
         }
         return false;
     }
