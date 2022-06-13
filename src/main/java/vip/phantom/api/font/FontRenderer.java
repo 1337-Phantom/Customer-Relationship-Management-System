@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2021, for DirtyMod by Dirt, Deleteboys, Phantom.
- * All rights reserved.
- *
- * Copyright (c) for Minecraft by Mojang.
- * (This license is not in contact with Mojangs)
- */
-
 package vip.phantom.api.font;
 
 import org.lwjgl.BufferUtils;

@@ -1,11 +1,3 @@
-/*
- * Copyright (c) 2022, for DirtyMod by Dirt, Deleteboys, Phantom.
- * All rights reserved.
- *
- * Copyright (c) for Minecraft by Mojang.
- * (This license is not in contact with Mojangs)
- */
-
 package vip.phantom.system.user_interface.interactive_areas.text;
 
 import lombok.Getter;
